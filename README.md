@@ -22,7 +22,7 @@ One of the first and main ones was introduced by E. Evans in its [Domain Driven 
 
 Based on it or in the same time, other applicative architectures appeared like [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/) (by. J. Palermo), [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/) (by A. Cockburn) or [Clean Architecture](https://8thlight.com/blog/uncle-bob/2012/08/13/the-clean-architecture.html) (by. R. Martin).
 
-This repository is an exploration of this type of architecture, mainly based on DDD and Clean Architecture, on a concrete and modern JavaScript application.
+This repository is an exploration of this type of architecture, mainly based on DDD and Clean Architecture, on a concrete and modern golang application.
 
 ## DDD and Clean Architecture
 
@@ -50,7 +50,7 @@ src. https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.htm
 
 ### Server, Routes and Plugins
 
-Server, routes and plugins can be considered as "plumbery-code" that exposes the API to the external world, via an instance of gin server.
+Server, routes and plugins can be considered as "plumbery-code" that exposes the API to the external world, via an instance of [gin-gonic](https://gin-gonic.com/) server.
 
 The role of the server is to intercept the HTTP request and match the corresponding route.
 
