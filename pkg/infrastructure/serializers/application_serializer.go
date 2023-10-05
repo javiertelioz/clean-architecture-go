@@ -1,7 +1,6 @@
 package serializers
 
 import (
-	"github.com/gin-gonic/gin"
 	"time"
 )
 
@@ -19,11 +18,5 @@ func NewApplicationSerializer(message string) *ApplicationSerializer {
 	return &ApplicationSerializer{
 		Message: message,
 		Date:    time.Now().String(),
-	}
-}
-
-func (s *ApplicationSerializer) Serialize() gin.H {
-	return gin.H{
-		"message": s.Message,
 	}
 }

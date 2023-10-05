@@ -1,7 +1,6 @@
 package serializers
 
 import (
-	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 )
 
@@ -39,15 +38,4 @@ func NewUserListSerializer(users []*entity.User) []*UserSerializer {
 	}
 
 	return userSerializers
-}
-
-func (s *UserSerializer) Serialize() gin.H {
-	return gin.H{
-		"id":       s.Id,
-		"name":     s.Name,
-		"email":    s.Email,
-		"lastName": s.LastName,
-		"surname":  s.Surname,
-		"phone":    s.Phone,
-	}
 }
