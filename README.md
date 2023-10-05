@@ -1,5 +1,6 @@
 # Clean Architecture Go
 
+[![codecov](https://codecov.io/gh/javiertelioz/clean-architecture-go/graph/badge.svg?token=1PWHG446NI)](https://codecov.io/gh/javiertelioz/clean-architecture-go)
 
 ## Getting started (< 2mn)
 
