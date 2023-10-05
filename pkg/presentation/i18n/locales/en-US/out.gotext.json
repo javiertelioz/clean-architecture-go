@@ -1,0 +1,29 @@
+{
+    "language": "en-US",
+    "messages": [
+        {
+            "id": "Hello {Name}",
+            "message": "Hello {Name}",
+            "translation": "Hello {Name}",
+            "translatorComment": "Copied from source.",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ],
+            "fuzzy": true
+        },
+        {
+            "id": "Welcome!",
+            "message": "Welcome!",
+            "translation": "Welcome!",
+            "translatorComment": "Copied from source.",
+            "fuzzy": true
+        }
+    ]
+}

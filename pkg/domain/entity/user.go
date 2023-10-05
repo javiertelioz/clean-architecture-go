@@ -1,0 +1,11 @@
+package entity
+
+type User struct {
+	ID       uint
+	Name     string
+	LastName string
+	Surname  string
+	Phone    string
+	Email    string
+	Password string
+}

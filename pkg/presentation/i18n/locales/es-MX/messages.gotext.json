@@ -1,0 +1,25 @@
+{
+    "language": "es-MX",
+    "messages": [
+        {
+            "id": "Hello {Name}",
+            "message": "Hello {Name}",
+            "translation": "Hola {Name}",
+            "placeholders": [
+                {
+                    "id": "Name",
+                    "string": "%[1]s",
+                    "type": "string",
+                    "underlyingType": "string",
+                    "argNum": 1,
+                    "expr": "name"
+                }
+            ]
+        },
+        {
+            "id": "Welcome!",
+            "message": "Welcome!",
+            "translation": "Bienvenido!"
+        }
+    ]
+}

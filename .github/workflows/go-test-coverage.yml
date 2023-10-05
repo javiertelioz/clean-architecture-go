@@ -1,0 +1,35 @@
+name: Go Test and Coverage
+
+on:
+  push:
+    branches:
+      - main  # O cambia a 'master' si usas esa rama
+  pull_request:
+    branches:
+      - main  # O cambia a 'master' si usas esa rama
+
+jobs:
+  test:
+    name: Run Tests and Upload Coverage to Codecov
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.21.x
+
+      - name: Run tests and get coverage
+        run: |
+          go test ./test/... -coverpkg=./pkg/... -coverprofile=coverage.out
+          go tool cover -func=coverage.out
+          go tool cover -html=coverage.out -o coverage.html
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./coverage.out
