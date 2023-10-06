@@ -69,7 +69,7 @@ func (c *UserController) GetUsersHandler(context *gin.Context) {
 	users, err := userUseCases.GetUsersUseCase(c.service, c.logger)
 
 	if err != nil {
-		response.ErrorResponse(context, http.StatusNotFound, err.Error())
+		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 
 		return
 	}
@@ -105,7 +105,7 @@ func (c *UserController) CreateUserHandler(context *gin.Context) {
 	user, err := userUseCases.CreateUserUseCase(userEntity, c.service, c.logger)
 
 	if err != nil {
-		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
+		response.ErrorResponse(context, http.StatusConflict, err.Error())
 		return
 	}
 
