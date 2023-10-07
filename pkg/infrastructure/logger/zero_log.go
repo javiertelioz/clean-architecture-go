@@ -24,7 +24,6 @@ func (z *ZerologLogger) Trace(msg string) {
 	log.Trace().
 		Str("loc", fmt.Sprintf("%s:%s", file, string(rune(line)))).
 		Msg(msg)
-
 }
 
 func (z *ZerologLogger) Debug(msg string) {

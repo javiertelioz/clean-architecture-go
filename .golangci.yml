@@ -1,6 +1,4 @@
 linters-settings:
-    gci:
-        local-prefixes: github.com/javiertelioz/clean-architecture-go
     dupl:
         threshold: 100
     errorlint:
@@ -51,6 +49,26 @@ linters-settings:
     nolintlint:
         require-explanation: true
         require-specific: true
+    depguard:
+      rules:
+        main:
+          allow:
+            - golang.org/x/text/cases
+            - golang.org/x/text/language
+            - gorm.io/gorm
+            - gorm.io/gorm/logger
+            - github.com/spf13/viper
+            - github.com/gin-gonic/gin
+            - gorm.io/driver/postgres
+            - github.com/rs/zerolog
+            - github.com/slack-go/slack
+            - github.com/swaggo/gin-swagger
+            - github.com/stretchr/testify/mock
+            - github.com/stretchr/testify/suite
+            - github.com/go-playground/validator/v10
+            - github.com/javiertelioz/clean-architecture-go/pkg/
+            - github.com/javiertelioz/clean-architecture-go/config
+            - github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks
 
 linters:
     disable-all: true

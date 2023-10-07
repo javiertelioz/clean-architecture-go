@@ -9,7 +9,6 @@ func GetUsersUseCase(
 	userService services.UserService,
 	logger services.LoggerService,
 ) ([]*entity.User, error) {
-
 	users, err := userService.GetUsers()
 
 	if err != nil {

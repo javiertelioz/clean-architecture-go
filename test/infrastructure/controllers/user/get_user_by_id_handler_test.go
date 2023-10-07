@@ -18,7 +18,6 @@ import (
 type GetUserByIdHandlerTestSuite struct {
 	suite.Suite
 	route             *gin.Engine
-	context           *gin.Context
 	controller        *controllers.UserController
 	mockUserService   *mocks.MockUserService
 	mockLoggerService *mocks.MockLoggerService
@@ -26,7 +25,6 @@ type GetUserByIdHandlerTestSuite struct {
 	response          *httptest.ResponseRecorder
 	userId            string
 	user              *entity.User
-	error             error
 }
 
 func TestGetUserByIdHandlerTestSuite(t *testing.T) {

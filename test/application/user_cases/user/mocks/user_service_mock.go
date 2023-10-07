@@ -15,6 +15,7 @@ func (m *MockUserService) GetUser(id string) (*entity.User, error) {
 	if args.Get(0) == nil {
 		return nil, args.Error(1)
 	}
+
 	return args.Get(0).(*entity.User), args.Error(1)
 }
 

@@ -17,15 +17,3 @@ func UnverifiedAccount() error {
 func InvalidCodeResetPassword() error {
 	return AuthError("INVALID_CODE_TO_RESET_PASSWORD")
 }
-
-func InvalidCodeSmsCode() error {
-	return AuthError("INVALID_SMS_CODE")
-}
-
-func InvalidCodeConfirmAccount() error {
-	return AuthError("INVALID_CODE_TO_CONFIRM_ACCOUNT")
-}
-
-func InvalidToken() error {
-	return AuthError("ACCOUNT_INVALID_TOKEN")
-}

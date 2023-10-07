@@ -10,7 +10,6 @@ func GetUserByIdUseCase(
 	userService services.UserService,
 	logger services.LoggerService,
 ) (*entity.User, error) {
-
 	user, err := userService.GetUser(id)
 
 	if err != nil {

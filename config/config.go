@@ -1,10 +1,11 @@
 package config
 
 import (
-	"errors"
 	"fmt"
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
+	"golang.org/x/text/cases"
+	"golang.org/x/text/language"
 	"reflect"
 	"strings"
 	"sync"
@@ -29,17 +30,18 @@ func LoadConfig() *Configuration {
 		loaderInstance = &Configuration{}
 
 		if err := viper.Unmarshal(loaderInstance); err != nil {
-			panic("Error interpretando configuración: " + err.Error())
+			panic("Error interpreting configuration: " + err.Error())
 		}
 
 		validate := validator.New()
 		if err := validate.Struct(loaderInstance); err != nil {
-			panic("Error validando configuración: " + err.Error())
+			panic("Error validating configuration: " + err.Error())
 		}
 	})
 
 	return loaderInstance
 }
+
 func GetConfig[T any](key string) (T, error) {
 	config := LoadConfig()
 
@@ -47,8 +49,9 @@ func GetConfig[T any](key string) (T, error) {
 
 	value := reflect.ValueOf(config).Elem()
 	var finalValue reflect.Value
+	causer := cases.Title(language.Und)
 	for _, k := range keys {
-		fieldVal := value.FieldByName(strings.Title(k))
+		fieldVal := value.FieldByName(causer.String(k))
 
 		if !fieldVal.IsValid() {
 			return zeroOf[T](), fmt.Errorf("config key %s not found", key)
@@ -65,12 +68,14 @@ func GetConfig[T any](key string) (T, error) {
 
 	result, ok := finalValue.Interface().(T)
 	if !ok {
-		return zeroOf[T](), errors.New(fmt.Sprintf("type mismatch: expected %T, but found %T", result, finalValue.Interface()))
+		return zeroOf[T](), fmt.Errorf("type mismatch: expected %T, but found %T", result, finalValue.Interface())
 	}
+
 	return result, nil
 }
 
 func zeroOf[T any]() T {
 	var v T
+
 	return v
 }

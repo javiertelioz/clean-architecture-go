@@ -93,7 +93,6 @@ func (c *UserController) GetUsersHandler(context *gin.Context) {
 //	@Failure		500				{object}	response.Response			"desc"
 //	@Router			/api/v1/users [post]
 func (c *UserController) CreateUserHandler(context *gin.Context) {
-
 	var createUserDTO dto.CreateUserDTO
 
 	if err := context.ShouldBindJSON(&createUserDTO); err != nil {

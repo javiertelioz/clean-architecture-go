@@ -17,7 +17,6 @@ import (
 type GetUsersHandlerTestSuite struct {
 	suite.Suite
 	route             *gin.Engine
-	context           *gin.Context
 	controller        *controllers.UserController
 	mockUserService   *mocks.MockUserService
 	mockLoggerService *mocks.MockLoggerService
@@ -56,8 +55,8 @@ func (suite *GetUsersHandlerTestSuite) givenUserServiceReturnsSuccess() {
 	suite.mockUserService.On("GetUsers").Return(suite.users, nil)
 }
 
-func (suite *GetUsersHandlerTestSuite) givenUserServiceReturnsError(error error) {
-	suite.mockUserService.On("GetUsers").Return(nil, error)
+func (suite *GetUsersHandlerTestSuite) givenUserServiceReturnsError(err error) {
+	suite.mockUserService.On("GetUsers").Return(nil, err)
 }
 
 func (suite *GetUsersHandlerTestSuite) whenCallGetUsersHandler() {

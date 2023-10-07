@@ -28,6 +28,7 @@ func NewJWTService() services.JWTService {
 
 func getSecretKey() string {
 	secret, _ := config.GetConfig[string]("Jwt.secret")
+
 	return secret
 }
 

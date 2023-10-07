@@ -7,6 +7,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const defaultLimit = 10
+
 type UserRepositoryPostgres struct {
 	db *gorm.DB
 }
@@ -65,7 +67,7 @@ func (r *UserRepositoryPostgres) FindByID(id string) (*entity.User, error) {
 
 func (r *UserRepositoryPostgres) FindAll() ([]*entity.User, error) {
 	modelUsers := make([]*model.User, 0)
-	tx := r.db.Limit(10).Find(&modelUsers)
+	tx := r.db.Limit(defaultLimit).Find(&modelUsers)
 
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -120,9 +122,11 @@ func (r *UserRepositoryPostgres) Delete(id int64) error {
 func (r *UserRepositoryPostgres) FindByEmail(email string) (*entity.User, error) {
 	user := &model.User{}
 	err := r.db.Where("email = ?", email).First(user).Error
+
 	if err != nil {
 		return nil, err
 	}
+
 	return &entity.User{
 		ID:       user.ID,
 		Name:     user.Name,

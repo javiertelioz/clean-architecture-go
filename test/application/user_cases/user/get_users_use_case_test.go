@@ -26,7 +26,7 @@ func (suite *GetUsersUseCaseTestSuite) SetupTest() {
 	suite.mockUserService = new(mocks.MockUserService)
 	suite.mockLoggerService = new(mocks.MockLoggerService)
 	suite.users = []*entity.User{
-		&entity.User{
+		{
 			ID:       1,
 			LastName: "Doe",
 			Name:     "John",
@@ -34,7 +34,7 @@ func (suite *GetUsersUseCaseTestSuite) SetupTest() {
 			Phone:    "+123456789",
 			Password: "password123",
 		},
-		&entity.User{
+		{
 			ID:       2,
 			LastName: "Doe",
 			Name:     "Jane",

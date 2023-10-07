@@ -61,8 +61,8 @@ func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsSuccess() {
 	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(suite.user, nil)
 }
 
-func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsError(error error) {
-	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(nil, error)
+func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsError(err error) {
+	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(nil, err)
 }
 
 func (suite *CreateUserHandlerTestSuite) whenCallCreateUserHandler() {

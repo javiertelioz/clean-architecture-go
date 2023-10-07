@@ -13,5 +13,4 @@ func main() {
 	defer database.CloseDB()
 
 	infrastructure.Server()
-
 }

@@ -75,6 +75,7 @@ func getLogger() logger.Interface {
 			Colorful:      true,
 		},
 	)
+
 	return newLogger
 }
 
