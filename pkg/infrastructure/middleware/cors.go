@@ -17,7 +17,5 @@ func CORSMiddleware() gin.HandlerFunc {
 		AllowCredentials: corsConfig.AllowCredentials,
 		MaxAge:           time.Duration(corsConfig.MaxAge) * time.Hour,
 	}
-
-	//config := cors.DefaultConfig()
 	return cors.New(config)
 }

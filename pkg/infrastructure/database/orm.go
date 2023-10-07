@@ -78,8 +78,8 @@ func getLogger() logger.Interface {
 	return newLogger
 }
 
-func CloseDB(db *gorm.DB) {
-	sqlDB, err := db.DB()
+func CloseDB() {
+	sqlDB, err := instance.DB()
 
 	if err != nil {
 		log.Println("Error closing database connection:", err)

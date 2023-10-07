@@ -18,8 +18,13 @@ install: ## Ensure the go.mod file is clean and updated with the project depende
 
 run: ## Ensure dependencies are up to date and then start the API.
 	go mod tidy && go mod download && \
-	DISABLE_SWAGGER_HTTP_HANDLER='' GIN_MODE=debug CGO_ENABLED=0 go run -tags migrate ./cmd/api
+ 	GIN_MODE=debug CGO_ENABLED=0 go run -tags migrate ./cmd/api
 .PHONY: run
+
+dev: ## Start development server.
+	echo "Start development server"
+	air
+.PHONY: dev
 
 compose-up: ## Build and start the postgres service using docker-compose and then show its logs.
 	docker-compose up --build -d postgres && docker-compose logs -f
