@@ -41,7 +41,13 @@ func (s *UserService) CreateUser(user *entity.User) (*entity.User, error) {
 }
 
 func (s *UserService) UpdateUser(user *entity.User) (*entity.User, error) {
-	return s.repository.Update(user)
+	updateUser, err := s.repository.Update(user)
+
+	if err != nil {
+		return nil, exceptions.UserNotFound()
+	}
+
+	return updateUser, nil
 }
 
 func (s *UserService) DeleteUser(id string) error {

@@ -141,7 +141,6 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusBadRequest, err.Error())
-
 		return
 	}
 
