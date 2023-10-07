@@ -1,3 +1,9 @@
+## 0.2.0 (2023-10-07)
+
+### Feat
+
+- install tool for semantic version
+
 ## 0.1.0 (2023-10-07)
 
 ### Feat
