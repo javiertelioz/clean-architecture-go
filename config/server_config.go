@@ -1,6 +1,6 @@
 package config
 
 type ServerConfig struct {
-	Host string `mapstructure:"host" validate:"required,hostname"`
+	Host string `mapstructure:"host"`
 	Port string `mapstructure:"port" validate:"required,numeric,gt=0,lte=65535"`
 }
