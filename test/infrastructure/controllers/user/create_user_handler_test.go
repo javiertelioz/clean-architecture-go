@@ -3,6 +3,7 @@ package user
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
@@ -22,6 +23,7 @@ type CreateUserHandlerTestSuite struct {
 	controller        *controllers.UserController
 	mockUserService   *mocks.MockUserService
 	mockLoggerService *mocks.MockLoggerService
+	mockCryptoService *mocks.MockCryptoService
 	request           *http.Request
 	response          *httptest.ResponseRecorder
 	userDTO           dto.CreateUserDTO
@@ -38,7 +40,8 @@ func (suite *CreateUserHandlerTestSuite) SetupTest() {
 	suite.route = gin.Default()
 	suite.mockUserService = new(mocks.MockUserService)
 	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.controller = controllers.NewUserController(suite.mockUserService, suite.mockLoggerService)
+	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
 
 	suite.userDTO = dto.CreateUserDTO{
 		LastName: "Doe",
@@ -63,6 +66,22 @@ func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsSuccess() {
 
 func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsError(err error) {
 	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(nil, err)
+}
+
+func (suite *CreateUserHandlerTestSuite) givenUserServiceByEmailReturnsSuccess() {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(suite.user, nil)
+}
+
+func (suite *CreateUserHandlerTestSuite) givenUserServiceByEmailReturnsError() {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(nil, exceptions.UserNotFound())
+}
+
+func (suite *CreateUserHandlerTestSuite) givenCryptoServiceReturnsSuccess() {
+	suite.mockCryptoService.On("Hash", suite.user.Password).Return("password123", nil)
+}
+
+func (suite *CreateUserHandlerTestSuite) givenCryptoServiceReturnsError() {
+	suite.mockCryptoService.On("Hash", suite.user.Password).Return(nil, errors.New("password_wrong"))
 }
 
 func (suite *CreateUserHandlerTestSuite) whenCallCreateUserHandler() {
@@ -101,12 +120,16 @@ func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerSuccess() {
+	suite.givenCryptoServiceReturnsSuccess()
+	suite.givenUserServiceByEmailReturnsError()
 	suite.givenUserServiceReturnsSuccess()
 	suite.whenCallCreateUserHandler()
 	suite.thenReturnSuccessResponse()
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerWithErrorResult() {
+	suite.givenCryptoServiceReturnsSuccess()
+	suite.givenUserServiceByEmailReturnsError()
 	suite.givenUserServiceReturnsError(exceptions.UserAlreadyExists())
 	suite.whenCallCreateUserHandler()
 	suite.thenReturnErrorResponse()

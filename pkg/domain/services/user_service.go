@@ -59,3 +59,13 @@ func (s *UserService) DeleteUser(id string) error {
 
 	return s.repository.Delete(int64(user.ID))
 }
+
+func (s *UserService) GetUserByEmail(email string) (*entity.User, error) {
+	user, err := s.repository.FindByEmail(email)
+
+	if err != nil {
+		return nil, exceptions.UserNotFound()
+	}
+
+	return user, nil
+}

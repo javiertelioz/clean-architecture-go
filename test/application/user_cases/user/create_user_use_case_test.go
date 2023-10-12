@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
+	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -13,6 +14,7 @@ type CreateUserUseCaseTestSuite struct {
 	suite.Suite
 	mockUserService   *mocks.MockUserService
 	mockLoggerService *mocks.MockLoggerService
+	mockCryptoService *mocks.MockCryptoService
 	user              *entity.User
 	result            *entity.User
 	err               error
@@ -25,6 +27,7 @@ func TestCreateUserUseCaseTestSuite(t *testing.T) {
 func (suite *CreateUserUseCaseTestSuite) SetupTest() {
 	suite.mockUserService = new(mocks.MockUserService)
 	suite.mockLoggerService = new(mocks.MockLoggerService)
+	suite.mockCryptoService = new(mocks.MockCryptoService)
 	suite.user = &entity.User{
 		ID:       1,
 		LastName: "Doe",
@@ -43,8 +46,24 @@ func (suite *CreateUserUseCaseTestSuite) givenUserServiceReturnsError() {
 	suite.mockUserService.On("CreateUser", suite.user).Return(nil, errors.New("database error"))
 }
 
+func (suite *CreateUserUseCaseTestSuite) givenUserServiceByEmailReturnsSuccess() {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(suite.user, nil)
+}
+
+func (suite *CreateUserUseCaseTestSuite) givenUserServiceByEmailReturnsError() {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(nil, exceptions.UserNotFound())
+}
+
+func (suite *CreateUserUseCaseTestSuite) givenCryptoServiceReturnsSuccess() {
+	suite.mockCryptoService.On("Hash", suite.user.Password).Return("password", nil)
+}
+
+func (suite *CreateUserUseCaseTestSuite) givenCryptoServiceReturnsError() {
+	suite.mockCryptoService.On("Hash", suite.user.Password).Return(nil, errors.New("password_wrong"))
+}
+
 func (suite *CreateUserUseCaseTestSuite) whenCreateUserUseCaseIsCalled() {
-	suite.result, suite.err = user.CreateUserUseCase(suite.user, suite.mockUserService, suite.mockLoggerService)
+	suite.result, suite.err = user.CreateUserUseCase(suite.user, suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
 }
 
 func (suite *CreateUserUseCaseTestSuite) thenExpectSuccess() {
@@ -52,16 +71,19 @@ func (suite *CreateUserUseCaseTestSuite) thenExpectSuccess() {
 	suite.NotNil(suite.result)
 	suite.Equal(suite.user.Name, suite.result.Name)
 	suite.mockUserService.AssertExpectations(suite.T())
+	suite.mockCryptoService.AssertExpectations(suite.T())
 }
 
 func (suite *CreateUserUseCaseTestSuite) thenExpectError() {
 	suite.Error(suite.err)
 	suite.Nil(suite.result)
-	suite.mockUserService.AssertExpectations(suite.T())
+	suite.mockCryptoService.AssertExpectations(suite.T())
 }
 
 func (suite *CreateUserUseCaseTestSuite) TestCreateUserUseCaseWithSuccessResult() {
 	// Given
+	suite.givenCryptoServiceReturnsSuccess()
+	suite.givenUserServiceByEmailReturnsError()
 	suite.givenUserServiceReturnsSuccess()
 
 	// When
@@ -73,6 +95,21 @@ func (suite *CreateUserUseCaseTestSuite) TestCreateUserUseCaseWithSuccessResult(
 
 func (suite *CreateUserUseCaseTestSuite) TestCreateUserUseCaseWithErrorResult() {
 	// Given
+	suite.givenCryptoServiceReturnsSuccess()
+	suite.givenUserServiceByEmailReturnsError()
+	suite.givenUserServiceReturnsError()
+
+	// When
+	suite.whenCreateUserUseCaseIsCalled()
+
+	// Then
+	suite.thenExpectError()
+}
+
+func (suite *CreateUserUseCaseTestSuite) TestCreateUserUseCaseWithUserAlreadyExistResult() {
+	// Given
+	suite.givenCryptoServiceReturnsSuccess()
+	suite.givenUserServiceByEmailReturnsSuccess()
 	suite.givenUserServiceReturnsError()
 
 	// When

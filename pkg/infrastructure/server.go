@@ -62,14 +62,17 @@ func initMiddleware(router *gin.Engine) gin.IRoutes {
 //	@contact.url	http://www.swagger.io/support
 //	@contact.email	support@docs.io
 
-//	@license.name	Apache 2.0
-//	@license.url	http://www.apache.org/licenses/LICENSE-2.0.html
-
+//	@license.name				Apache 2.0
+//	@license.url				http://www.apache.org/licenses/LICENSE-2.0.html
+//
 //	@host						localhost:8080
 //	@BasePath					/
+//	@Schemes					http https
+//
 //	@securityDefinitions.apikey	bearerAuth
 //	@in							header
 //	@name						Authorization
+//	@description				Type "Bearer" followed by a space and the access token.
 //
 //	@accept						json
 //	@produce					json
@@ -77,7 +80,6 @@ func initMiddleware(router *gin.Engine) gin.IRoutes {
 //	@externalDocs.description	OpenAPI
 //	@externalDocs.url			https://swagger.io/resources/open-api/
 
-// @Schemes	http https
 func initRouters(router *gin.Engine) {
 	routes.SetupApplicationRoutes(router)
 
@@ -85,6 +87,7 @@ func initRouters(router *gin.Engine) {
 	{
 		routes.SetupHelloRoutes(v1)
 		routes.SetupUserController(v1)
+		routes.SetupAuthRoutes(v1)
 	}
 
 	routes.SetupSwaggerRoutes(router)

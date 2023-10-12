@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
-	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
+	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -31,7 +31,7 @@ func (suite *DeleteUserUseCaseTestSuite) givenUserServiceReturnsSuccess() {
 }
 
 func (suite *DeleteUserUseCaseTestSuite) givenUserServiceReturnsError() {
-	suite.mockUserService.On("DeleteUser", suite.userID).Return(exceptions.UserNotFound())
+	suite.mockUserService.On("DeleteUser", suite.userID).Return(user2.UserNotFound())
 }
 
 func (suite *DeleteUserUseCaseTestSuite) whenDeleteUserUseCaseIsCalled() {
@@ -45,7 +45,7 @@ func (suite *DeleteUserUseCaseTestSuite) thenExpectSuccess() {
 
 func (suite *DeleteUserUseCaseTestSuite) thenExpectError() {
 	suite.Error(suite.err)
-	suite.Equal(suite.err.Error(), exceptions.UserNotFound().Error())
+	suite.Equal(suite.err.Error(), user2.UserNotFound().Error())
 	suite.mockUserService.AssertExpectations(suite.T())
 }
 

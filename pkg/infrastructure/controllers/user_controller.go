@@ -13,17 +13,20 @@ import (
 )
 
 type UserController struct {
-	service services.UserService
-	logger  services.LoggerService
+	cryptoService services.CryptoService
+	userService   services.UserService
+	loggerService services.LoggerService
 }
 
 func NewUserController(
-	service services.UserService,
-	logger services.LoggerService,
+	cryptoService services.CryptoService,
+	userService services.UserService,
+	loggerService services.LoggerService,
 ) *UserController {
 	return &UserController{
-		service: service,
-		logger:  logger,
+		cryptoService: cryptoService,
+		userService:   userService,
+		loggerService: loggerService,
 	}
 }
 
@@ -42,7 +45,7 @@ func NewUserController(
 func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 	id := context.Param("id")
 
-	user, err := userUseCases.GetUserByIdUseCase(id, c.service, c.logger)
+	user, err := userUseCases.GetUserByIdUseCase(id, c.userService, c.loggerService)
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusNotFound, err.Error())
@@ -63,10 +66,11 @@ func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 //	@Produce		json
 //	@Param			Accept-Language	header		string						false	"Language"	default(en-US)
 //	@Success		200				{array}		serializers.UserSerializer	"desc"
-//	@Failure		404				{object}	response.Response			"desc"
+//	@Failure		401				{object}	response.Error				"desc"
+//	@Security		bearerAuth
 //	@Router			/api/v1/users [get]
 func (c *UserController) GetUsersHandler(context *gin.Context) {
-	users, err := userUseCases.GetUsersUseCase(c.service, c.logger)
+	users, err := userUseCases.GetUsersUseCase(c.userService, c.loggerService)
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
@@ -101,7 +105,7 @@ func (c *UserController) CreateUserHandler(context *gin.Context) {
 	}
 
 	userEntity := createUserDTO.ToEntity()
-	user, err := userUseCases.CreateUserUseCase(userEntity, c.service, c.logger)
+	user, err := userUseCases.CreateUserUseCase(userEntity, c.cryptoService, c.userService, c.loggerService)
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusConflict, err.Error())
@@ -146,7 +150,7 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 	userEntity := updateUserDto.ToEntity()
 	userEntity.ID = uint(intID)
 
-	user, err := userUseCases.UpdateUserUseCase(userEntity, c.service, c.logger)
+	user, err := userUseCases.UpdateUserUseCase(userEntity, c.userService, c.loggerService)
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
@@ -171,7 +175,7 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 func (c *UserController) DeleteUserHandler(context *gin.Context) {
 	id := context.Param("id")
 
-	err := userUseCases.DeleteUserUseCase(id, c.service, c.logger)
+	err := userUseCases.DeleteUserUseCase(id, c.userService, c.loggerService)
 
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())

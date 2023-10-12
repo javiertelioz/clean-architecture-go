@@ -1,8 +1,10 @@
 package services
 
-import "github.com/dgrijalva/jwt-go"
+import (
+	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
+)
 
 type JWTService interface {
-	GenerateToken(username string, admin bool) string
-	ValidateToken(token string) (*jwt.Token, error)
+	Generate(user *entity.User) (string, error)
+	Verify(token string) (*entity.Token, error)
 }

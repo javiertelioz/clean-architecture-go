@@ -1,5 +1,7 @@
 package entity
 
+type UserRole string
+
 type User struct {
 	ID       uint
 	Name     string
@@ -8,4 +10,5 @@ type User struct {
 	Phone    string
 	Email    string
 	Password string
+	Role     UserRole
 }

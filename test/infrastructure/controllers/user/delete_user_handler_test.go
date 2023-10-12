@@ -20,6 +20,7 @@ type DeleteUserHandlerTestSuite struct {
 	controller        *controllers.UserController
 	mockUserService   *mocks.MockUserService
 	mockLoggerService *mocks.MockLoggerService
+	mockCryptoService *mocks.MockCryptoService
 	request           *http.Request
 	response          *httptest.ResponseRecorder
 	userId            string
@@ -35,7 +36,8 @@ func (suite *DeleteUserHandlerTestSuite) SetupTest() {
 	suite.route = gin.Default()
 	suite.mockUserService = new(mocks.MockUserService)
 	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.controller = controllers.NewUserController(suite.mockUserService, suite.mockLoggerService)
+	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
 }
 
 func (suite *DeleteUserHandlerTestSuite) givenUserId(id string) {

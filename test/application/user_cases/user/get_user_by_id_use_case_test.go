@@ -3,7 +3,7 @@ package user
 import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
-	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
+	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
 	"github.com/stretchr/testify/suite"
 	"testing"
@@ -42,7 +42,7 @@ func (suite *GetUserByIdUseCaseTestSuite) givenUserServiceReturnsSuccess() {
 }
 
 func (suite *GetUserByIdUseCaseTestSuite) givenUserServiceReturnsError() {
-	suite.mockUserService.On("GetUser", suite.userID).Return(nil, exceptions.UserNotFound())
+	suite.mockUserService.On("GetUser", suite.userID).Return(nil, user2.UserNotFound())
 }
 
 func (suite *GetUserByIdUseCaseTestSuite) whenGetUserByIdUseCaseIsCalled() {

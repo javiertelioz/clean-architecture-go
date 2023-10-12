@@ -9,6 +9,16 @@ type MockUserService struct {
 	mock.Mock
 }
 
+func (m *MockUserService) GetUserByEmail(email string) (*entity.User, error) {
+	args := m.Called(email)
+
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+
+	return args.Get(0).(*entity.User), args.Error(1)
+}
+
 func (m *MockUserService) GetUser(id string) (*entity.User, error) {
 	args := m.Called(id)
 
