@@ -7,6 +7,7 @@ type Configuration struct {
 	Server   ServerConfig   `mapstructure:"server" validate:"required"`
 	Database DatabaseConfig `mapstructure:"database" validate:"required"`
 	Cors     CorsConfig     `mapstructure:"cors" validate:"required"`
+	Crypto   CryptoConfig   `mapstructure:"crypto" validate:"required"`
 	Jwt      JwtConfig      `mapstructure:"jwt" validate:"required"`
 	Slack    SlackConfig    `mapstructure:"slack" validate:"required"`
 }

@@ -52,6 +52,59 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "Get token",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Get access token (login)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "en-US",
+                        "description": "Language",
+                        "name": "Accept-Language",
+                        "in": "header"
+                    },
+                    {
+                        "description": "User data to be created",
+                        "name": "User",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/serializers.TokenSerializer"
+                        }
+                    },
+                    "401": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "desc",
+                        "schema": {
+                            "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/hello/{name}": {
             "get": {
                 "description": "Say Hello",
@@ -94,6 +147,11 @@ const docTemplate = `{
         },
         "/api/v1/users": {
             "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
                 "description": "Retrieves a list of all registered users",
                 "consumes": [
                     "application/json"
@@ -124,10 +182,10 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "404": {
+                    "401": {
                         "description": "desc",
                         "schema": {
-                            "$ref": "#/definitions/response.Response"
+                            "$ref": "#/definitions/response.Error"
                         }
                     }
                 }
@@ -347,6 +405,40 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.LoginDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
+        "response.Error": {
+            "type": "object",
+            "properties": {
+                "details": {},
+                "errorCode": {
+                    "type": "string"
+                },
+                "message": {
+                    "type": "string"
+                },
+                "request_id": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string"
+                }
+            }
+        },
         "response.Response": {
             "description": "response information",
             "type": "object",
@@ -388,6 +480,16 @@ const docTemplate = `{
                 }
             }
         },
+        "serializers.TokenSerializer": {
+            "description": "Token information",
+            "type": "object",
+            "properties": {
+                "token": {
+                    "type": "string",
+                    "example": ""
+                }
+            }
+        },
         "serializers.UserSerializer": {
             "description": "User information",
             "type": "object",
@@ -425,6 +527,7 @@ const docTemplate = `{
     },
     "securityDefinitions": {
         "bearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and the access token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

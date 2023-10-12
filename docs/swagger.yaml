@@ -1,5 +1,28 @@
 basePath: /
 definitions:
+  dto.LoginDTO:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  response.Error:
+    properties:
+      details: {}
+      errorCode:
+        type: string
+      message:
+        type: string
+      request_id:
+        type: string
+      timestamp:
+        type: string
+    type: object
   response.Response:
     description: response information
     properties:
@@ -27,6 +50,13 @@ definitions:
     properties:
       message:
         example: Joe
+        type: string
+    type: object
+  serializers.TokenSerializer:
+    description: Token information
+    properties:
+      token:
+        example: ""
         type: string
     type: object
   serializers.UserSerializer:
@@ -86,6 +116,41 @@ paths:
       summary: Retrieve application information
       tags:
       - Application
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Get token
+      parameters:
+      - default: en-US
+        description: Language
+        in: header
+        name: Accept-Language
+        type: string
+      - description: User data to be created
+        in: body
+        name: User
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: desc
+          schema:
+            $ref: '#/definitions/serializers.TokenSerializer'
+        "401":
+          description: desc
+          schema:
+            $ref: '#/definitions/response.Response'
+        "500":
+          description: desc
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: Get access token (login)
+      tags:
+      - Auth
   /api/v1/hello/{name}:
     get:
       consumes:
@@ -133,10 +198,12 @@ paths:
             items:
               $ref: '#/definitions/serializers.UserSerializer'
             type: array
-        "404":
+        "401":
           description: desc
           schema:
-            $ref: '#/definitions/response.Response'
+            $ref: '#/definitions/response.Error'
+      security:
+      - bearerAuth: []
       summary: List all users
       tags:
       - User
@@ -285,6 +352,7 @@ schemes:
 - https
 securityDefinitions:
   bearerAuth:
+    description: Type "Bearer" followed by a space and the access token.
     in: header
     name: Authorization
     type: apiKey
