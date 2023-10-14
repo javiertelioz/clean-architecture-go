@@ -4,6 +4,7 @@ pipeline {
         go 'golang 1.21.3'
     }
     environment {
+        CGO_ENABLED=1
         GOPATH = "${JENKINS_HOME}/jobs/${JOB_NAME}/builds/${BUILD_ID}"
     }
     stages {
