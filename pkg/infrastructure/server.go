@@ -53,15 +53,14 @@ func initMiddleware(router *gin.Engine) gin.IRoutes {
 	)
 }
 
-//	@title			Swagger Clean Architecture Go
-//	@version		1.0
-//	@description	This is a sample. You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/)
-//	@termsOfService	http://swagger.io/terms/
-
-//	@contact.name	API Support
-//	@contact.url	http://www.swagger.io/support
-//	@contact.email	support@docs.io
-
+//	@title						Swagger Clean Architecture Go
+//	@version					1.0
+//	@description				This is a sample. You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/)
+//	@termsOfService				http://swagger.io/terms/
+//	@contact.name				API Support
+//	@contact.url				http://www.swagger.io/support
+//	@contact.email				support@docs.io
+//
 //	@license.name				Apache 2.0
 //	@license.url				http://www.apache.org/licenses/LICENSE-2.0.html
 //
@@ -79,9 +78,11 @@ func initMiddleware(router *gin.Engine) gin.IRoutes {
 //
 //	@externalDocs.description	OpenAPI
 //	@externalDocs.url			https://swagger.io/resources/open-api/
-
 func initRouters(router *gin.Engine) {
 	routes.SetupApplicationRoutes(router)
+
+	routes.SetupGraphQLRoutes(router)
+	routes.SetupSwaggerRoutes(router)
 
 	v1 := router.Group("/api/v1")
 	{
@@ -89,6 +90,4 @@ func initRouters(router *gin.Engine) {
 		routes.SetupUserController(v1)
 		routes.SetupAuthRoutes(v1)
 	}
-
-	routes.SetupSwaggerRoutes(router)
 }

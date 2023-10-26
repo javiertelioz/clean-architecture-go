@@ -3,10 +3,10 @@ name: Go Test and Coverage
 on:
   push:
     branches:
-      - main  # O cambia a 'master' si usas esa rama
+      - main
   pull_request:
     branches:
-      - main  # O cambia a 'master' si usas esa rama
+      - main
 
 jobs:
   test:
