@@ -12,8 +12,8 @@ jobs:
   test:
     name: Run Tests and Upload Coverage to Codecov
     runs-on: ubuntu-latest
-    steps:
 
+    steps:
       - name: Check out code
         uses: actions/checkout@v2
 
