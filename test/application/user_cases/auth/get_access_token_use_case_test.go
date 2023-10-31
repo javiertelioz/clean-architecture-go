@@ -5,17 +5,17 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/auth"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type GetAccessTokenUseCaseTestSuite struct {
 	suite.Suite
-	mockUserService   *mocks.MockUserService
-	mockCryptoService *mocks.MockCryptoService
-	mockJwtService    *mocks.MockJwtService
-	mockLoggerService *mocks.MockLoggerService
+	mockUserService   *service.MockUserService
+	mockCryptoService *service.MockCryptoService
+	mockJwtService    *service.MockJwtService
+	mockLoggerService *service.MockLoggerService
 	user              *entity.User
 	result            string
 	err               error
@@ -26,10 +26,10 @@ func TestGetAccessTokenUseCaseTestSuite(t *testing.T) {
 }
 
 func (suite *GetAccessTokenUseCaseTestSuite) SetupTest() {
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.mockJwtService = new(mocks.MockJwtService)
-	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
+	suite.mockJwtService = new(service.MockJwtService)
+	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.user = &entity.User{
 		ID:       1,
 		LastName: "Doe",
@@ -40,28 +40,16 @@ func (suite *GetAccessTokenUseCaseTestSuite) SetupTest() {
 	}
 }
 
-func (suite *GetAccessTokenUseCaseTestSuite) givenUserServiceByEmailReturnsSuccess() {
-	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(suite.user, nil)
+func (suite *GetAccessTokenUseCaseTestSuite) givenUserServiceFindsUserByEmail(user *entity.User, err error) {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(user, err)
 }
 
-func (suite *GetAccessTokenUseCaseTestSuite) givenUserServiceByEmailReturnsError() {
-	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(nil, exceptions.UserNotFound())
+func (suite *GetAccessTokenUseCaseTestSuite) givenCryptoServiceVerifiesPassword(err error) {
+	suite.mockCryptoService.On("Verify", suite.user.Password, "password123").Return(err)
 }
 
-func (suite *GetAccessTokenUseCaseTestSuite) givenCryptoServiceReturnsSuccess() {
-	suite.mockCryptoService.On("Verify", suite.user.Password, "password123").Return(nil)
-}
-
-func (suite *GetAccessTokenUseCaseTestSuite) givenCryptoServiceReturnsError() {
-	suite.mockCryptoService.On("Verify", suite.user.Password, "password123").Return(errors.New("password_wrong"))
-}
-
-func (suite *GetAccessTokenUseCaseTestSuite) givenJWTServiceReturnsSuccess() {
-	suite.mockJwtService.On("Generate", suite.user).Return("token", nil)
-}
-
-func (suite *GetAccessTokenUseCaseTestSuite) givenJWTServiceReturnsError() {
-	suite.mockJwtService.On("Generate", suite.user).Return(nil, exceptions.AuthExpiredToken())
+func (suite *GetAccessTokenUseCaseTestSuite) givenJWTServiceReturns(token string, err error) {
+	suite.mockJwtService.On("Generate", suite.user).Return(token, err)
 }
 
 func (suite *GetAccessTokenUseCaseTestSuite) whenGetAccessTokenUseCaseIsCalled() {
@@ -91,9 +79,9 @@ func (suite *GetAccessTokenUseCaseTestSuite) thenExpectError() {
 
 func (suite *GetAccessTokenUseCaseTestSuite) TestGetAccessTokenUseCaseWithSuccessResult() {
 	// Given
-	suite.givenUserServiceByEmailReturnsSuccess()
-	suite.givenCryptoServiceReturnsSuccess()
-	suite.givenJWTServiceReturnsSuccess()
+	suite.givenUserServiceFindsUserByEmail(suite.user, nil)
+	suite.givenCryptoServiceVerifiesPassword(nil)
+	suite.givenJWTServiceReturns("token", nil)
 
 	// When
 	suite.whenGetAccessTokenUseCaseIsCalled()
@@ -104,7 +92,7 @@ func (suite *GetAccessTokenUseCaseTestSuite) TestGetAccessTokenUseCaseWithSucces
 
 func (suite *GetAccessTokenUseCaseTestSuite) TestGetAccessTokenUseCaseWithNoFoundUserResult() {
 	// Given
-	suite.givenUserServiceByEmailReturnsError()
+	suite.givenUserServiceFindsUserByEmail(nil, exceptions.UserNotFound())
 
 	// When
 	suite.whenGetAccessTokenUseCaseIsCalled()
@@ -115,8 +103,8 @@ func (suite *GetAccessTokenUseCaseTestSuite) TestGetAccessTokenUseCaseWithNoFoun
 
 func (suite *GetAccessTokenUseCaseTestSuite) TestGetAccessTokenUseCaseWithBadCredentialsResult() {
 	// Given
-	suite.givenUserServiceByEmailReturnsSuccess()
-	suite.givenCryptoServiceReturnsError()
+	suite.givenUserServiceFindsUserByEmail(suite.user, nil)
+	suite.givenCryptoServiceVerifiesPassword(errors.New("password_wrong"))
 
 	// When
 	suite.whenGetAccessTokenUseCaseIsCalled()

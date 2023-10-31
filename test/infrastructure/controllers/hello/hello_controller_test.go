@@ -32,11 +32,11 @@ func (suite *HelloControllerTestSuite) SetupTest() {
 	suite.controller = controllers.NewHelloController()
 }
 
-func (suite *HelloControllerTestSuite) giveName(name string) {
+func (suite *HelloControllerTestSuite) givenName(name string) {
 	suite.name = name
 }
 
-func (suite *HelloControllerTestSuite) whenCallHelloHandler() {
+func (suite *HelloControllerTestSuite) whenHelloHandlerIsCalled() {
 	suite.route.GET("/api/v1/hello/:name", suite.controller.HelloHandler)
 	suite.request, suite.error = http.NewRequest(
 		http.MethodGet,
@@ -59,13 +59,23 @@ func (suite *HelloControllerTestSuite) thenReturnNoFoundResponse() {
 }
 
 func (suite *HelloControllerTestSuite) TestHelloHandlerWithParam() {
-	suite.giveName("Joe")
-	suite.whenCallHelloHandler()
+	// Given
+	suite.givenName("Joe")
+
+	// When
+	suite.whenHelloHandlerIsCalled()
+
+	// Then
 	suite.thenReturnSuccessResponse()
 }
 
 func (suite *HelloControllerTestSuite) TestHelloHandlerWithoutParam() {
-	suite.giveName("")
-	suite.whenCallHelloHandler()
+	// Given
+	suite.givenName("")
+
+	// When
+	suite.whenHelloHandlerIsCalled()
+
+	// Then
 	suite.thenReturnNoFoundResponse()
 }

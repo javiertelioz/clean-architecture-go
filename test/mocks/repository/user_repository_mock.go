@@ -1,4 +1,4 @@
-package mocks
+package repository
 
 import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"

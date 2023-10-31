@@ -9,7 +9,7 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
@@ -20,9 +20,9 @@ type UpdateUserHandlerTestSuite struct {
 	suite.Suite
 	route             *gin.Engine
 	controller        *controllers.UserController
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
-	mockCryptoService *mocks.MockCryptoService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
+	mockCryptoService *service.MockCryptoService
 	request           *http.Request
 	response          *httptest.ResponseRecorder
 	payload           string
@@ -39,9 +39,9 @@ func (suite *UpdateUserHandlerTestSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 
 	suite.route = gin.Default()
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
+	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
 	suite.user = &entity.User{
 		ID:       1,

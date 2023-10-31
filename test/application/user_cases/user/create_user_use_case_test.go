@@ -5,16 +5,16 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type CreateUserUseCaseTestSuite struct {
 	suite.Suite
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
-	mockCryptoService *mocks.MockCryptoService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
+	mockCryptoService *service.MockCryptoService
 	user              *entity.User
 	result            *entity.User
 	err               error
@@ -25,9 +25,9 @@ func TestCreateUserUseCaseTestSuite(t *testing.T) {
 }
 
 func (suite *CreateUserUseCaseTestSuite) SetupTest() {
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
+	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.user = &entity.User{
 		ID:       1,
 		LastName: "Doe",

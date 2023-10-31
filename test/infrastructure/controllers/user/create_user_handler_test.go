@@ -10,7 +10,7 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
@@ -21,9 +21,9 @@ type CreateUserHandlerTestSuite struct {
 	suite.Suite
 	route             *gin.Engine
 	controller        *controllers.UserController
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
-	mockCryptoService *mocks.MockCryptoService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
+	mockCryptoService *service.MockCryptoService
 	request           *http.Request
 	response          *httptest.ResponseRecorder
 	userDTO           dto.CreateUserDTO
@@ -38,9 +38,9 @@ func (suite *CreateUserHandlerTestSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 
 	suite.route = gin.Default()
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
+	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
 
 	suite.userDTO = dto.CreateUserDTO{
@@ -58,39 +58,32 @@ func (suite *CreateUserHandlerTestSuite) SetupTest() {
 		Phone:    "+123456789",
 		Password: "password123",
 	}
+
+	suite.route.POST("/api/v1/users", suite.controller.CreateUserHandler)
 }
 
-func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsSuccess() {
-	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(suite.user, nil)
+func (suite *CreateUserHandlerTestSuite) givenUserServiceReturns(user *entity.User, err error) {
+	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(user, err)
 }
 
-func (suite *CreateUserHandlerTestSuite) givenUserServiceReturnsError(err error) {
-	suite.mockUserService.On("CreateUser", suite.userDTO.ToEntity()).Return(nil, err)
+func (suite *CreateUserHandlerTestSuite) givenUserServiceByEmailReturns(user *entity.User, err error) {
+	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(user, err)
 }
 
-func (suite *CreateUserHandlerTestSuite) givenUserServiceByEmailReturnsSuccess() {
-	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(suite.user, nil)
-}
-
-func (suite *CreateUserHandlerTestSuite) givenUserServiceByEmailReturnsError() {
-	suite.mockUserService.On("GetUserByEmail", suite.user.Email).Return(nil, exceptions.UserNotFound())
-}
-
-func (suite *CreateUserHandlerTestSuite) givenCryptoServiceReturnsSuccess() {
-	suite.mockCryptoService.On("Hash", suite.user.Password).Return("password123", nil)
-}
-
-func (suite *CreateUserHandlerTestSuite) givenCryptoServiceReturnsError() {
-	suite.mockCryptoService.On("Hash", suite.user.Password).Return(nil, errors.New("password_wrong"))
+func (suite *CreateUserHandlerTestSuite) givenCryptoServiceReturnsHashedPassword(password string, err error) {
+	suite.mockCryptoService.On("Hash", suite.user.Password).Return(password, err)
 }
 
 func (suite *CreateUserHandlerTestSuite) whenCallCreateUserHandler() {
-	data, _ := json.Marshal(suite.userDTO)
-	suite.request, _ = http.NewRequest(http.MethodPost, "/api/v1/users", bytes.NewBuffer(data))
+	data, err := json.Marshal(suite.userDTO)
+	suite.NoError(err)
+
+	suite.request, err = http.NewRequest(http.MethodPost, "/api/v1/users", bytes.NewBuffer(data))
+	suite.NoError(err)
+
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
-	suite.route.POST("/api/v1/users", suite.controller.CreateUserHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 
@@ -120,17 +113,27 @@ func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerSuccess() {
-	suite.givenCryptoServiceReturnsSuccess()
-	suite.givenUserServiceByEmailReturnsError()
-	suite.givenUserServiceReturnsSuccess()
+	// Given
+	suite.givenCryptoServiceReturnsHashedPassword("password123", nil)
+	suite.givenUserServiceByEmailReturns(nil, exceptions.UserNotFound())
+	suite.givenUserServiceReturns(suite.user, nil)
+
+	// When
 	suite.whenCallCreateUserHandler()
+
+	// Then
 	suite.thenReturnSuccessResponse()
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerWithErrorResult() {
-	suite.givenCryptoServiceReturnsSuccess()
-	suite.givenUserServiceByEmailReturnsError()
-	suite.givenUserServiceReturnsError(exceptions.UserAlreadyExists())
+	// Given
+	suite.givenCryptoServiceReturnsHashedPassword("password123", errors.New("password_wrong"))
+	suite.givenUserServiceByEmailReturns(nil, exceptions.UserNotFound())
+	suite.givenUserServiceReturns(nil, exceptions.UserAlreadyExists())
+
+	// When
 	suite.whenCallCreateUserHandler()
+
+	// Then
 	suite.thenReturnErrorResponse()
 }

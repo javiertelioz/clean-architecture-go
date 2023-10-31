@@ -3,15 +3,15 @@ package user
 import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type DeleteUserUseCaseTestSuite struct {
 	suite.Suite
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
 	userID            string
 	err               error
 }
@@ -21,8 +21,8 @@ func TestDeleteUserUseCaseTestSuite(t *testing.T) {
 }
 
 func (suite *DeleteUserUseCaseTestSuite) SetupTest() {
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.userID = "1"
 }
 

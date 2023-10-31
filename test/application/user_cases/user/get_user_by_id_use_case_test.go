@@ -4,15 +4,15 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
 type GetUserByIdUseCaseTestSuite struct {
 	suite.Suite
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
 	userID            string
 	user              *entity.User
 	result            *entity.User
@@ -24,8 +24,8 @@ func TestGetUserByIdUseCaseTestSuite(t *testing.T) {
 }
 
 func (suite *GetUserByIdUseCaseTestSuite) SetupTest() {
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.userID = "1"
 	suite.user = &entity.User{
 		ID:       1,

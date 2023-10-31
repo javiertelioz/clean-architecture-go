@@ -7,7 +7,7 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
-	"github.com/javiertelioz/clean-architecture-go/test/application/user_cases/user/mocks"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
@@ -18,9 +18,9 @@ type GetUsersHandlerTestSuite struct {
 	suite.Suite
 	route             *gin.Engine
 	controller        *controllers.UserController
-	mockUserService   *mocks.MockUserService
-	mockLoggerService *mocks.MockLoggerService
-	mockCryptoService *mocks.MockCryptoService
+	mockUserService   *service.MockUserService
+	mockLoggerService *service.MockLoggerService
+	mockCryptoService *service.MockCryptoService
 	request           *http.Request
 	response          *httptest.ResponseRecorder
 	users             []*entity.User
@@ -34,11 +34,10 @@ func (suite *GetUsersHandlerTestSuite) SetupTest() {
 	gin.SetMode(gin.TestMode)
 
 	suite.route = gin.Default()
-	suite.mockUserService = new(mocks.MockUserService)
-	suite.mockLoggerService = new(mocks.MockLoggerService)
-	suite.mockCryptoService = new(mocks.MockCryptoService)
+	suite.mockUserService = new(service.MockUserService)
+	suite.mockLoggerService = new(service.MockLoggerService)
+	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
-
 	suite.users = []*entity.User{
 		{
 			ID:       1,
@@ -91,12 +90,22 @@ func (suite *GetUsersHandlerTestSuite) thenReturnErrorResponse() {
 }
 
 func (suite *GetUsersHandlerTestSuite) TestGetUsersHandlerAndResponseSuccess() {
+	// Given
 	suite.givenUserServiceReturnsSuccess()
+
+	// When
 	suite.whenCallGetUsersHandler()
+
+	// Then
 	suite.thenReturnSuccessResponse()
 }
 func (suite *GetUsersHandlerTestSuite) TestGetUserHandlerResponseError() {
+	// Given
 	suite.givenUserServiceReturnsError(errors.New("internal Server Error"))
+
+	// When
 	suite.whenCallGetUsersHandler()
+
+	// Then
 	suite.thenReturnErrorResponse()
 }
