@@ -23,7 +23,7 @@ WORKDIR /app
 
 # copy binary
 COPY --from=build /app/bin/application ./
-COPY config_template.yml ./config.yaml
+COPY example.config.yaml config.yaml
 
 ENV PORT=8080
 

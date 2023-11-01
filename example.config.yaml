@@ -17,6 +17,13 @@ database:
     sslmode:
     timezone:
 
+jwt:
+    secret: secret
+    expiration: 1d
+
+crypto:
+    salt: 10
+
 cors:
     allow_credentials: true
     max_age: 12
@@ -36,11 +43,3 @@ cors:
         - "Content-Type"
     expose_headers:
         - '*'
-
-jwt:
-    secret: secret
-    expiration: 1d
-
-slack:
-    access_token:
-    channel:
