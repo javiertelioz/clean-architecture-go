@@ -59,7 +59,6 @@ func (suite *CreateUserHandlerTestSuite) SetupTest() {
 		Password: "password123",
 	}
 
-	suite.route.POST("/api/v1/users", suite.controller.CreateUserHandler)
 }
 
 func (suite *CreateUserHandlerTestSuite) givenUserServiceReturns(user *entity.User, err error) {
@@ -84,6 +83,7 @@ func (suite *CreateUserHandlerTestSuite) whenCallCreateUserHandler() {
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
+	suite.route.POST("/api/v1/users", suite.controller.CreateUserHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 
@@ -99,6 +99,8 @@ func (suite *CreateUserHandlerTestSuite) thenReturnSuccessResponse() {
 	suite.Equal(suite.user.Name, data["name"])
 
 	suite.mockUserService.AssertExpectations(suite.T())
+	suite.mockCryptoService.AssertExpectations(suite.T())
+
 }
 
 func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {
@@ -110,6 +112,7 @@ func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {
 	suite.Equal("USER_ALREADY_EXISTS", responseBody.Message)
 
 	suite.mockUserService.AssertExpectations(suite.T())
+	suite.mockCryptoService.AssertExpectations(suite.T())
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerSuccess() {

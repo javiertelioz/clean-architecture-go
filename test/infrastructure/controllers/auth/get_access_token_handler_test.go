@@ -85,6 +85,14 @@ func (suite *GetAccessTokenHandlerTestSuite) whenCallGetAccessTokenHandler() {
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 
+func (suite *GetAccessTokenHandlerTestSuite) whenCallGetAccessTokenHandlerWithInvalidJSON(invalidJSON string) {
+	suite.request, _ = http.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewBufferString(invalidJSON))
+	suite.response = httptest.NewRecorder()
+
+	suite.route.POST("/api/v1/auth/login", suite.controller.GetAccessTokenHandler)
+	suite.route.ServeHTTP(suite.response, suite.request)
+}
+
 func (suite *GetAccessTokenHandlerTestSuite) thenReturnSuccessResponse() {
 	var responseBody response.Response
 	err := json.Unmarshal(suite.response.Body.Bytes(), &responseBody)
@@ -99,7 +107,6 @@ func (suite *GetAccessTokenHandlerTestSuite) thenReturnErrorResponse() {
 
 	suite.NoError(err)
 	suite.Equal(http.StatusBadRequest, suite.response.Code)
-	// suite.Equal("YOUR_ERROR_MESSAGE_HERE", responseBody.Message)
 }
 
 func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerSuccess() {
@@ -111,16 +118,6 @@ func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerSuccess() 
 
 	suite.thenReturnSuccessResponse()
 }
-
-/*func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerUserNotFound() {
-
-	suite.givenUserServiceByEmailReturns(suite.user, nil)
-	suite.givenCryptoServiceReturns(nil)
-
-	suite.whenCallGetAccessTokenHandler()
-
-	suite.thenReturnErrorResponse()
-}*/
 
 func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerWrongPassword() {
 	suite.givenUserServiceByEmailReturns(suite.user, nil)
@@ -139,4 +136,12 @@ func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerJWTError()
 	suite.whenCallGetAccessTokenHandler()
 
 	suite.thenReturnErrorResponse()
+}
+
+func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerInvalidJSON() {
+	// Given
+	invalidJSON := `{"Email":"john@example.com",}`
+
+	// When
+	suite.whenCallGetAccessTokenHandlerWithInvalidJSON(invalidJSON)
 }

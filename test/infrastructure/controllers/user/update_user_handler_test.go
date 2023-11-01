@@ -86,8 +86,6 @@ func (suite *UpdateUserHandlerTestSuite) givenInvalidUpdateUserPayload(payload s
 }
 
 func (suite *UpdateUserHandlerTestSuite) whenCallUpdateUserHandler() {
-	// payload, _ := json.Marshal(suite.updateUserDto)
-
 	suite.request, _ = http.NewRequest(http.MethodPut, fmt.Sprintf("/api/v1/users/%s", suite.userId), bytes.NewBufferString(suite.payload))
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
