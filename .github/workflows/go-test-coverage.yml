@@ -24,7 +24,7 @@ jobs:
 
       - name: Run tests and get coverage
         run: |
-          @mkdir -p coverage
+          mkdir -p coverage
           go test ./test/... -coverpkg=./pkg/... -coverprofile=coverage.out
           go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage/coverage.out -shuffle=on
           go tool cover -func=coverage/coverage.out
