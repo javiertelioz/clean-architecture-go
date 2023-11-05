@@ -1,3 +1,14 @@
+## 0.4.0 (2023-11-04)
+
+### Feat
+
+- add test to graphql controller
+- add mutation to graphql (Experimental schema, apollo sandbox)
+
+### Fix
+
+- Update go version to fix vulnerability on some packages
+
 ## 0.3.0 (2023-10-31)
 
 ### Feat
