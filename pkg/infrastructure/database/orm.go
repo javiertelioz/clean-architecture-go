@@ -2,9 +2,6 @@ package database
 
 import (
 	"fmt"
-	"github.com/javiertelioz/clean-architecture-go/config"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/database/model"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"sync"
@@ -12,7 +9,11 @@ import (
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
+
+	"github.com/javiertelioz/clean-architecture-go/config"
+	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/database/model"
 )
 
 var (
@@ -81,7 +82,6 @@ func getLogger() logger.Interface {
 
 func CloseDB() {
 	sqlDB, err := instance.DB()
-
 	if err != nil {
 		log.Println("Error closing database connection:", err)
 		return

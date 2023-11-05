@@ -10,7 +10,6 @@ func DeleteUserUseCase(
 	logger services.LoggerService,
 ) error {
 	err := userService.DeleteUser(id)
-
 	if err != nil {
 		logger.Error(err.Error())
 		return err

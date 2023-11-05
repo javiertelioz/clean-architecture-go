@@ -22,7 +22,6 @@ func CreateUserUseCase(
 	}
 
 	createdUser, err := userService.CreateUser(user)
-
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err

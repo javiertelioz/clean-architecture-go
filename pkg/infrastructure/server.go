@@ -2,6 +2,7 @@ package infrastructure
 
 import (
 	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/config"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/middleware"
@@ -17,7 +18,6 @@ func Server() {
 	fmt.Printf("🚀 Starting application on: http://%s/\n", addr)
 
 	err := server.Run(addr)
-
 	if err != nil {
 		panic(err)
 	}
@@ -31,7 +31,6 @@ func initServer() *gin.Engine {
 
 	router.ForwardedByClientIP = true
 	err := router.SetTrustedProxies([]string{"127.0.0.1"})
-
 	if err != nil {
 		return nil
 	}

@@ -17,7 +17,6 @@ func NewBcryptService(salt int) services.CryptoService {
 
 func (bs BcryptService) Hash(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bs.salt)
-
 	if err != nil {
 		return "", err
 	}

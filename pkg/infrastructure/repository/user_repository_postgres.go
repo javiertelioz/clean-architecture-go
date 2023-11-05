@@ -30,7 +30,6 @@ func (r *UserRepositoryPostgres) Create(entityUser *entity.User) (*entity.User, 
 	}
 
 	err := r.db.Create(&user).Error
-
 	if err != nil {
 		return nil, err
 	}
@@ -49,7 +48,6 @@ func (r *UserRepositoryPostgres) Create(entityUser *entity.User) (*entity.User, 
 func (r *UserRepositoryPostgres) FindByID(id string) (*entity.User, error) {
 	user := &model.User{}
 	err := r.db.First(user, id).Error
-
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +120,6 @@ func (r *UserRepositoryPostgres) Delete(id int64) error {
 func (r *UserRepositoryPostgres) FindByEmail(email string) (*entity.User, error) {
 	user := &model.User{}
 	err := r.db.Where("email = ?", email).First(user).Error
-
 	if err != nil {
 		return nil, err
 	}

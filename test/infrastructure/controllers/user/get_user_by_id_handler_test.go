@@ -3,6 +3,10 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
@@ -10,9 +14,6 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type GetUserByIdHandlerTestSuite struct {
@@ -63,7 +64,7 @@ func (suite *GetUserByIdHandlerTestSuite) givenUserServiceReturnsError() {
 }
 
 func (suite *GetUserByIdHandlerTestSuite) whenCallGetUserByIdHandler() {
-	suite.request, _ = http.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/user/%s", suite.userId), nil)
+	suite.request, _ = http.NewRequest(http.MethodGet, fmt.Sprintf("/api/v1/user/%s", suite.userId), http.NoBody)
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 

@@ -3,13 +3,14 @@ package application
 import (
 	"bytes"
 	"encoding/json"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type ApplicationControllerTestSuite struct {
@@ -55,7 +56,6 @@ func (suite *ApplicationControllerTestSuite) thenReturnSuccessResponse() {
 }
 
 func (suite *ApplicationControllerTestSuite) TestApplicationHandler() {
-
 	suite.whenCallApplicationHandler()
 	suite.thenReturnSuccessResponse()
 }

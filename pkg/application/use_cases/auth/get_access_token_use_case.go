@@ -14,7 +14,6 @@ func GetAccessTokenUserUseCase(
 	loggerService services.LoggerService,
 ) (string, error) {
 	user, err := userService.GetUserByEmail(email)
-
 	if err != nil {
 		loggerService.Error(err.Error())
 		return "", err

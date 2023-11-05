@@ -3,9 +3,10 @@ package model
 import (
 	"database/sql"
 	"fmt"
+	"time"
+
 	"github.com/javiertelioz/clean-architecture-go/config"
 	"gorm.io/gorm"
-	"time"
 )
 
 type User struct {

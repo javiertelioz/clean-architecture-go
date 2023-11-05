@@ -2,11 +2,12 @@ package logger
 
 import (
 	"fmt"
+	"runtime"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
-	"runtime"
 )
 
 type ZerologLogger struct{}

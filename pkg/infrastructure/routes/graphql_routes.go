@@ -7,11 +7,10 @@ import (
 )
 
 func SetupGraphQLRoutes(route *gin.Engine) {
-	//appConfig, _ := config.GetConfig[string]("AppName")
-
 	schema := graphql.NewSchema()
 	controller := controllers.NewGraphQLController(schema)
 
+	route.GET("/sandbox", controller.SandboxHandler)
 	route.POST("/graphql", controller.GraphQLHandler)
 	route.GET("/graphql", controller.GraphQLHandler)
 }

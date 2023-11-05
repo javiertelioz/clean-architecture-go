@@ -2,6 +2,7 @@ package providers
 
 import (
 	"fmt"
+
 	"github.com/javiertelioz/clean-architecture-go/config"
 	"github.com/slack-go/slack"
 )
@@ -15,7 +16,6 @@ func SendSlackAlert(text string) {
 		slackConfig.Channel,
 		slack.MsgOptionText(text, false),
 	)
-
 	if err != nil {
 		fmt.Printf("%s\n", err)
 		return

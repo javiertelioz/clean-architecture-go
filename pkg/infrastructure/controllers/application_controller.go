@@ -2,9 +2,10 @@ package controllers
 
 import (
 	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	"net/http"
 )
 
 type ApplicationController struct {

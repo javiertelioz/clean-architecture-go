@@ -1,12 +1,13 @@
 package user
 
 import (
+	"testing"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type GetUserByIdUseCaseTestSuite struct {

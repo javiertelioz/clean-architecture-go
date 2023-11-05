@@ -2,20 +2,21 @@ package middleware
 
 import (
 	"errors"
+	"net/http"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/auth"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/logger"
 	infrastructureService "github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/services"
-	"net/http"
-	"strings"
 )
 
 const (
-	// authorizationHeaderKey is the key for authorization header in the request
+	// authorizationHeaderKey is the key for authorization header in the request.
 	authorizationHeaderKey = "authorization"
-	// authorizationType is the accepted authorization type
+	// authorizationType is the accepted authorization type.
 	authorizationType = "bearer"
-	// authorizationPayloadKey is the key for authorization payload in the context
+	// authorizationPayloadKey is the key for authorization payload in the context.
 	authorizationPayloadKey = "authorization_payload"
 )
 
@@ -50,7 +51,6 @@ func AuthorizeJWT() gin.HandlerFunc {
 		loggerService := logger.NewLogger()
 		jwtService, _ := infrastructureService.NewJWTService("YELLOW SUBMARINE, BLACK WIZARDRY", loggerService)
 		payload, err := auth.VerifyAccessTokenUserUseCase(accessToken, jwtService, loggerService)
-
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"code": 0, "message": err.Error()})
 			return

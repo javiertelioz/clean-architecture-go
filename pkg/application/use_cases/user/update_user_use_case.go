@@ -11,7 +11,6 @@ func UpdateUserUseCase(
 	logger services.LoggerService,
 ) (*entity.User, error) {
 	updateUser, err := userService.UpdateUser(user)
-
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err

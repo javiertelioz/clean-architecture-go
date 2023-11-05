@@ -11,9 +11,7 @@ func VerifyAccessTokenUserUseCase(
 	jwtService services.JWTService,
 	loggerService services.LoggerService,
 ) (*entity.Token, error) {
-
 	tokenInfo, err := jwtService.Verify(token)
-
 	if err != nil {
 		loggerService.Error(err.Error())
 		return nil, exceptions.AuthInvalidToken()

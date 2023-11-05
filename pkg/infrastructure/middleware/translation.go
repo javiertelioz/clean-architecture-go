@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	"log"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/localizer"
-	"log"
 )
 
 func TranslationMiddleware() gin.HandlerFunc {
