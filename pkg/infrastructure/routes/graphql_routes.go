@@ -11,6 +11,6 @@ func SetupGraphQLRoutes(route *gin.Engine) {
 	controller := controllers.NewGraphQLController(schema)
 
 	route.GET("/sandbox", controller.SandboxHandler)
-	route.POST("/graphql", controller.GraphQLHandler)
 	route.GET("/graphql", controller.GraphQLHandler)
+	route.POST("/graphql", controller.GraphQLHandler)
 }
