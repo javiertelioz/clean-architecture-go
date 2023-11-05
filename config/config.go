@@ -50,8 +50,8 @@ func GetConfig[T any](key string) (T, error) {
 
 	value := reflect.ValueOf(config).Elem()
 	var finalValue reflect.Value
-	causer := cases.Title(language.Und)
 	for _, k := range keys {
+		causer := cases.Title(language.English, cases.NoLower)
 		fieldVal := value.FieldByName(causer.String(k))
 
 		if !fieldVal.IsValid() {
@@ -77,6 +77,5 @@ func GetConfig[T any](key string) (T, error) {
 
 func zeroOf[T any]() T {
 	var v T
-
 	return v
 }
