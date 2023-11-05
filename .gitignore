@@ -25,5 +25,5 @@ bin/
 vendor/
 
 #Codecov
-coverage.html
-coverage.out
+coverage/coverage.html
+coverage/coverage.out
