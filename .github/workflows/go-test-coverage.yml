@@ -24,12 +24,14 @@ jobs:
 
       - name: Run tests and get coverage
         run: |
+          mkdir -p coverage
           go test ./test/... -coverpkg=./pkg/... -coverprofile=coverage.out
-          go tool cover -func=coverage.out
-          go tool cover -html=coverage.out -o coverage.html
+          go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage/coverage.out -shuffle=on
+          go tool cover -func=coverage/coverage.out
+          go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./coverage.out
+          file: ./coverage/coverage.out

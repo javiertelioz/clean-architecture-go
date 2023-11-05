@@ -40,15 +40,17 @@ swagger: ## Format and initialize API documentation generation with Swaggo.
 .PHONY: swagger
 
 test: ## Clear the test cache and then execute all project tests with coverage.
+	@mkdir -p coverage
 	go clean -testcache
-	go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage.out -shuffle=on
+	go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage/coverage.out -shuffle=on
 .PHONY: test
 
 coverage: ## Generate and visualize a test coverage report in HTML format.
+	@mkdir -p coverage
 	go clean -testcache
-	go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage.out -shuffle=on
-	go tool cover -func=coverage.out
-	go tool cover -html=coverage.out -o coverage.html
+	go test -v -race -cover -covermode=atomic ./test/... -coverpkg=./pkg/... -coverprofile=coverage/coverage.out -shuffle=on
+	go tool cover -func=coverage/coverage.out
+	go tool cover -html=coverage/coverage.out -o coverage/coverage.html
 .PHONY: coverage
 
 linter: ## Run the golangci-lint on the project source code to detect style issues or errors.
