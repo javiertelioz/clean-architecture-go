@@ -1,10 +1,11 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/hello"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	"net/http"
 )
 
 type HelloController struct{}
@@ -14,6 +15,7 @@ func NewHelloController() *HelloController {
 }
 
 // HelloHandler godoc
+//
 //	@Summary		Say Hello
 //	@Description	Say Hello
 //	@Tags			Hello

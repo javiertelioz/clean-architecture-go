@@ -1,15 +1,16 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/config"
-	"time"
 )
 
 func CORSMiddleware() gin.HandlerFunc {
 	corsConfig, _ := config.GetConfig[config.CorsConfig]("Cors")
-	config := cors.Config{
+	c := cors.Config{
 		AllowOrigins:     corsConfig.AllowedOrigins, // []string{"https://foo.com"},
 		AllowMethods:     corsConfig.AllowMethods,
 		AllowHeaders:     corsConfig.AllowHeaders,
@@ -18,5 +19,5 @@ func CORSMiddleware() gin.HandlerFunc {
 		MaxAge:           time.Duration(corsConfig.MaxAge) * time.Hour,
 	}
 
-	return cors.New(config)
+	return cors.New(c)
 }

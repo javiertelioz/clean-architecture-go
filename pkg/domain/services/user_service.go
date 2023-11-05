@@ -28,7 +28,6 @@ func (s *UserService) GetUsers() ([]*entity.User, error) {
 
 func (s *UserService) GetUser(id string) (*entity.User, error) {
 	user, err := s.repository.FindByID(id)
-
 	if err != nil {
 		return nil, exceptions.UserNotFound()
 	}
@@ -42,7 +41,6 @@ func (s *UserService) CreateUser(user *entity.User) (*entity.User, error) {
 
 func (s *UserService) UpdateUser(user *entity.User) (*entity.User, error) {
 	updateUser, err := s.repository.Update(user)
-
 	if err != nil {
 		return nil, exceptions.UserNotFound()
 	}
@@ -52,7 +50,6 @@ func (s *UserService) UpdateUser(user *entity.User) (*entity.User, error) {
 
 func (s *UserService) DeleteUser(id string) error {
 	user, err := s.repository.FindByID(id)
-
 	if err != nil {
 		return exceptions.UserNotFound()
 	}
@@ -62,7 +59,6 @@ func (s *UserService) DeleteUser(id string) error {
 
 func (s *UserService) GetUserByEmail(email string) (*entity.User, error) {
 	user, err := s.repository.FindByEmail(email)
-
 	if err != nil {
 		return nil, exceptions.UserNotFound()
 	}

@@ -4,6 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
@@ -12,9 +16,6 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type CreateUserHandlerTestSuite struct {
@@ -58,7 +59,6 @@ func (suite *CreateUserHandlerTestSuite) SetupTest() {
 		Phone:    "+123456789",
 		Password: "password123",
 	}
-
 }
 
 func (suite *CreateUserHandlerTestSuite) givenUserServiceReturns(user *entity.User, err error) {
@@ -100,7 +100,6 @@ func (suite *CreateUserHandlerTestSuite) thenReturnSuccessResponse() {
 
 	suite.mockUserService.AssertExpectations(suite.T())
 	suite.mockCryptoService.AssertExpectations(suite.T())
-
 }
 
 func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {

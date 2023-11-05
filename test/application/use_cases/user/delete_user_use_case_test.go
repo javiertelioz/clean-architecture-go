@@ -1,11 +1,12 @@
 package user
 
 import (
+	"testing"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	user2 "github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type DeleteUserUseCaseTestSuite struct {

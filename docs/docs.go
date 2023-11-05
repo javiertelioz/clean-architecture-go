@@ -440,7 +440,7 @@ const docTemplate = `{
             }
         },
         "response.Response": {
-            "description": "response information",
+            "description": "response information.",
             "type": "object",
             "properties": {
                 "code": {

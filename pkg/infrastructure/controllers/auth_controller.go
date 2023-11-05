@@ -1,13 +1,14 @@
 package controllers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/auth"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	"net/http"
 )
 
 type AuthController struct {
@@ -59,7 +60,6 @@ func (c *AuthController) GetAccessTokenHandler(context *gin.Context) {
 		c.jwtService,
 		c.userService,
 		c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusBadRequest, err.Error())
 		return

@@ -3,15 +3,16 @@ package user
 import (
 	"encoding/json"
 	"errors"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type GetUsersHandlerTestSuite struct {
@@ -61,7 +62,7 @@ func (suite *GetUsersHandlerTestSuite) givenUserServiceReturnsError(err error) {
 }
 
 func (suite *GetUsersHandlerTestSuite) whenCallGetUsersHandler() {
-	suite.request, _ = http.NewRequest(http.MethodGet, "/api/v1/users", nil)
+	suite.request, _ = http.NewRequest(http.MethodGet, "/api/v1/users", http.NoBody)
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
@@ -99,6 +100,7 @@ func (suite *GetUsersHandlerTestSuite) TestGetUsersHandlerAndResponseSuccess() {
 	// Then
 	suite.thenReturnSuccessResponse()
 }
+
 func (suite *GetUsersHandlerTestSuite) TestGetUserHandlerResponseError() {
 	// Given
 	suite.givenUserServiceReturnsError(errors.New("internal Server Error"))

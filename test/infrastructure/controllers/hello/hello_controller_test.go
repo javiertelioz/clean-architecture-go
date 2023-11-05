@@ -3,12 +3,13 @@ package hello
 import (
 	"bytes"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
-	"github.com/stretchr/testify/suite"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	"github.com/stretchr/testify/suite"
 )
 
 type HelloControllerTestSuite struct {

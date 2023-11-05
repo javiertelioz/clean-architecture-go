@@ -1,7 +1,7 @@
 package response
 
 // Response
-// @Description response information
+// @Description response information.
 type Response struct {
 	Code    int         `json:"code"`
 	Message string      `json:"message" example:"Success"`

@@ -2,13 +2,14 @@ package config
 
 import (
 	"fmt"
+	"reflect"
+	"strings"
+	"sync"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/spf13/viper"
 	"golang.org/x/text/cases"
 	"golang.org/x/text/language"
-	"reflect"
-	"strings"
-	"sync"
 )
 
 var (

@@ -2,13 +2,14 @@ package services
 
 import (
 	"errors"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/o1egl/paseto"
 	"golang.org/x/crypto/chacha20poly1305"
-	"time"
 )
 
 type PasetoService struct {
@@ -42,7 +43,6 @@ func NewJWTService(
 
 func (ps *PasetoService) Generate(user *entity.User) (string, error) {
 	id, err := uuid.NewRandom()
-
 	if err != nil {
 		return "", err
 	}
@@ -65,7 +65,6 @@ func (ps *PasetoService) Verify(token string) (*entity.Token, error) {
 	var payload entity.Token
 
 	err := ps.paseto.Decrypt(token, ps.symmetricKey, &payload, nil)
-
 	if err != nil {
 		return nil, exceptions.AuthInvalidToken()
 	}

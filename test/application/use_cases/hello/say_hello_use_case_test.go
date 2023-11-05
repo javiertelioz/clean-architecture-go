@@ -2,9 +2,10 @@ package hello
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/hello"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type SayHelloUseCaseTestSuite struct {

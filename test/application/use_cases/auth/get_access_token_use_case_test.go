@@ -2,12 +2,13 @@ package auth
 
 import (
 	"errors"
+	"testing"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/auth"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"testing"
 )
 
 type GetAccessTokenUseCaseTestSuite struct {

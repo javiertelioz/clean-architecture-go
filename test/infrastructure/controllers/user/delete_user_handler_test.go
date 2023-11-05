@@ -3,15 +3,16 @@ package user
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
+	"net/http/httptest"
+	"testing"
+
 	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 	"github.com/stretchr/testify/suite"
-	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type DeleteUserHandlerTestSuite struct {
@@ -49,12 +50,11 @@ func (suite *DeleteUserHandlerTestSuite) givenUserServiceReturnsSuccess() {
 }
 
 func (suite *DeleteUserHandlerTestSuite) givenUserServiceReturnsError(error error) {
-
 	suite.mockUserService.On("DeleteUser", suite.userId).Return(error)
 }
 
 func (suite *DeleteUserHandlerTestSuite) whenCallDeleteUserHandler() {
-	suite.request, _ = http.NewRequest(http.MethodDelete, fmt.Sprintf("/api/v1/users/%s", suite.userId), nil)
+	suite.request, _ = http.NewRequest(http.MethodDelete, fmt.Sprintf("/api/v1/users/%s", suite.userId), http.NoBody)
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 

@@ -1,15 +1,15 @@
 package controllers
 
 import (
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
 	userUseCases "github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	"net/http"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 type UserController struct {
@@ -46,7 +46,6 @@ func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	user, err := userUseCases.GetUserByIdUseCase(id, c.userService, c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusNotFound, err.Error())
 		return
@@ -71,7 +70,6 @@ func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 //	@Router			/api/v1/users [get]
 func (c *UserController) GetUsersHandler(context *gin.Context) {
 	users, err := userUseCases.GetUsersUseCase(c.userService, c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 
@@ -106,7 +104,6 @@ func (c *UserController) CreateUserHandler(context *gin.Context) {
 
 	userEntity := createUserDTO.ToEntity()
 	user, err := userUseCases.CreateUserUseCase(userEntity, c.cryptoService, c.userService, c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusConflict, err.Error())
 		return
@@ -141,7 +138,6 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 	}
 
 	intID, err := strconv.Atoi(id)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusBadRequest, err.Error())
 		return
@@ -151,7 +147,6 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 	userEntity.ID = uint(intID)
 
 	user, err := userUseCases.UpdateUserUseCase(userEntity, c.userService, c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 		return
@@ -176,7 +171,6 @@ func (c *UserController) DeleteUserHandler(context *gin.Context) {
 	id := context.Param("id")
 
 	err := userUseCases.DeleteUserUseCase(id, c.userService, c.loggerService)
-
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 		return
