@@ -80,7 +80,7 @@ func (r *UserResolver) GetUserById(p graphql.ResolveParams) (interface{}, error)
 func (r *UserResolver) UpdateUser(p graphql.ResolveParams) (interface{}, error) {
 	userInput, _ := p.Args["user"].(map[string]interface{})
 	id, _ := p.Args["id"].(string)
-	userId, _ := strconv.ParseUint(id, 10, 64)
+	userId, _ := strconv.Atoi(id)
 
 	user := &entity.User{
 		ID:       uint(userId),
