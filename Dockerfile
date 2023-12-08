@@ -16,7 +16,7 @@ RUN go mod download
 RUN go build -o ./bin/application ./cmd/api/main.go
 
 # final stage
-FROM alpine:3.18 AS final
+FROM alpine:3.19 AS final
 
 # set working directory
 WORKDIR /app
