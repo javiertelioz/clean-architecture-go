@@ -1,5 +1,5 @@
 # build stage
-FROM golang:1.21-alpine3.18 AS build
+FROM golang:1.21-alpine3.19 AS build
 
 LABEL maintainer="Javier Telio <jtelio118@gmail.com>"
 
