@@ -1,4 +1,4 @@
-# Clean Architecture Go
+# Clean Architecture Go Template
 
 [![codecov](https://codecov.io/gh/javiertelioz/clean-architecture-go/graph/badge.svg?token=1PWHG446NI)](https://codecov.io/gh/javiertelioz/clean-architecture-go)
 
