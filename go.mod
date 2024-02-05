@@ -10,7 +10,7 @@ require (
 	github.com/graphql-go/graphql v0.8.1
 	github.com/graphql-go/handler v0.2.3
 	github.com/o1egl/paseto v1.0.0
-	github.com/rs/zerolog v1.31.0
+	github.com/rs/zerolog v1.32.0
 	github.com/slack-go/slack v0.12.3
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.8.4
