@@ -40,7 +40,13 @@ func (suite *GetUserByIdHandlerTestSuite) SetupTest() {
 	suite.mockUserService = new(service.MockUserService)
 	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.mockCryptoService = new(service.MockCryptoService)
-	suite.controller = controllers.NewUserController(suite.mockCryptoService, suite.mockUserService, suite.mockLoggerService)
+	services := &controllers.Services{
+		CryptoService: suite.mockCryptoService,
+		UserService:   suite.mockUserService,
+		LoggerService: suite.mockLoggerService,
+	}
+
+	suite.controller = controllers.NewUserController(services)
 	suite.user = &entity.User{
 		ID:       1,
 		LastName: "Doe",

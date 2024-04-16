@@ -318,7 +318,7 @@ paths:
         name: id
         required: true
         type: integer
-      - description: User data to be update
+      - description: User data to be updated
         in: body
         name: User
         required: true

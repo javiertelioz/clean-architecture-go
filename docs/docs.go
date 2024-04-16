@@ -321,7 +321,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "User data to be update",
+                        "description": "User data to be updated",
                         "name": "User",
                         "in": "body",
                         "required": true,

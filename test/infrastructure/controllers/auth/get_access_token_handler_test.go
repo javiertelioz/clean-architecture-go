@@ -122,7 +122,7 @@ func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerSuccess() 
 
 func (suite *GetAccessTokenHandlerTestSuite) TestGetAccessTokenHandlerWrongPassword() {
 	suite.givenUserServiceByEmailReturns(suite.user, nil)
-	suite.givenCryptoServiceReturns(errors.New("password_wrong"))
+	suite.givenCryptoServiceReturns(errors.New("PASSWORD_WRONG"))
 
 	suite.whenCallGetAccessTokenHandler()
 

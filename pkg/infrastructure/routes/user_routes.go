@@ -20,7 +20,14 @@ func SetupUserController(router *gin.RouterGroup) {
 	userRepository := repository.NewUserRepository(db)
 	cryptoService := infrastructureServices.NewBcryptService(salt)
 	userService := domainServices.NewUserService(userRepository, loggerService)
-	controller := controllers.NewUserController(cryptoService, userService, loggerService)
+
+	services := &controllers.Services{
+		CryptoService: cryptoService,
+		UserService:   userService,
+		LoggerService: loggerService,
+	}
+
+	controller := controllers.NewUserController(services)
 
 	router.GET("/users", middleware.AuthorizeJWT(), controller.GetUsersHandler)
 	router.GET("/users/:id", controller.GetUserByIdHandler)

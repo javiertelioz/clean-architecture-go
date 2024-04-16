@@ -12,21 +12,19 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
 )
 
-type UserController struct {
-	cryptoService services.CryptoService
-	userService   services.UserService
-	loggerService services.LoggerService
+type Services struct {
+	UserService   services.UserService
+	CryptoService services.CryptoService
+	LoggerService services.LoggerService
 }
 
-func NewUserController(
-	cryptoService services.CryptoService,
-	userService services.UserService,
-	loggerService services.LoggerService,
-) *UserController {
+type UserController struct {
+	services *Services
+}
+
+func NewUserController(services *Services) *UserController {
 	return &UserController{
-		cryptoService: cryptoService,
-		userService:   userService,
-		loggerService: loggerService,
+		services: services,
 	}
 }
 
@@ -45,14 +43,13 @@ func NewUserController(
 func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 	id := context.Param("id")
 
-	user, err := userUseCases.GetUserByIdUseCase(id, c.userService, c.loggerService)
+	user, err := userUseCases.GetUserByIdUseCase(id, c.services.UserService, c.services.LoggerService)
 	if err != nil {
 		response.ErrorResponse(context, http.StatusNotFound, err.Error())
 		return
 	}
 
 	payload := serializers.NewUserSerializer(user)
-
 	response.SuccessResponse(context, http.StatusOK, payload)
 }
 
@@ -69,10 +66,10 @@ func (c *UserController) GetUserByIdHandler(context *gin.Context) {
 //	@Security		bearerAuth
 //	@Router			/api/v1/users [get]
 func (c *UserController) GetUsersHandler(context *gin.Context) {
-	users, err := userUseCases.GetUsersUseCase(c.userService, c.loggerService)
+	users, err := userUseCases.GetUsersUseCase(c.services.UserService, c.services.LoggerService)
+
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
-
 		return
 	}
 
@@ -103,7 +100,12 @@ func (c *UserController) CreateUserHandler(context *gin.Context) {
 	}
 
 	userEntity := createUserDTO.ToEntity()
-	user, err := userUseCases.CreateUserUseCase(userEntity, c.cryptoService, c.userService, c.loggerService)
+	user, err := userUseCases.CreateUserUseCase(
+		userEntity,
+		c.services.CryptoService,
+		c.services.UserService,
+		c.services.LoggerService,
+	)
 	if err != nil {
 		response.ErrorResponse(context, http.StatusConflict, err.Error())
 		return
@@ -121,7 +123,7 @@ func (c *UserController) CreateUserHandler(context *gin.Context) {
 //	@Accept			json
 //	@Produce		json
 //	@Param			id				path		int							true	"User ID"	default(1)
-//	@Param			User			body		serializers.UserSerializer	true	"User data to be update"
+//	@Param			User			body		serializers.UserSerializer	true	"User data to be updated"
 //	@Param			Accept-Language	header		string						false	"Language"	default(en-US)
 //	@Success		200				{object}	serializers.UserSerializer	"desc"
 //	@Failure		400				{object}	response.Response			"desc"
@@ -146,7 +148,11 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 	userEntity := updateUserDto.ToEntity()
 	userEntity.ID = uint(intID)
 
-	user, err := userUseCases.UpdateUserUseCase(userEntity, c.userService, c.loggerService)
+	user, err := userUseCases.UpdateUserUseCase(
+		userEntity,
+		c.services.UserService,
+		c.services.LoggerService,
+	)
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 		return
@@ -170,7 +176,11 @@ func (c *UserController) UpdateUserHandler(context *gin.Context) {
 func (c *UserController) DeleteUserHandler(context *gin.Context) {
 	id := context.Param("id")
 
-	err := userUseCases.DeleteUserUseCase(id, c.userService, c.loggerService)
+	err := userUseCases.DeleteUserUseCase(
+		id,
+		c.services.UserService,
+		c.services.LoggerService,
+	)
 	if err != nil {
 		response.ErrorResponse(context, http.StatusInternalServerError, err.Error())
 		return
