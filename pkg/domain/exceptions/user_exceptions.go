@@ -13,3 +13,7 @@ func UserNotFound() error {
 func UserAlreadyExists() error {
 	return UserError("USER_ALREADY_EXISTS")
 }
+
+func UserPasswordWrong() error {
+	return UserError("USER_PASSWORD_WRONG")
+}

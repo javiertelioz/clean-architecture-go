@@ -12,16 +12,21 @@ func CreateUserUseCase(
 	userService services.UserService,
 	logger services.LoggerService,
 ) (*entity.User, error) {
-	hashedPassword, err := cryptoService.Hash(user.Password)
-	user.Password = hashedPassword
-
 	exist, err := userService.GetUserByEmail(user.Email)
 
 	if exist != nil {
 		return nil, exceptions.UserAlreadyExists()
 	}
 
+	hashedPassword, err := cryptoService.Hash(user.Password)
+	if err != nil {
+		logger.Error("Failed to hash password: " + err.Error())
+		return nil, err
+	}
+
+	user.Password = hashedPassword
 	createdUser, err := userService.CreateUser(user)
+
 	if err != nil {
 		logger.Error(err.Error())
 		return nil, err
