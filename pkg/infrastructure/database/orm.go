@@ -12,7 +12,6 @@ import (
 	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 
-	"github.com/javiertelioz/clean-architecture-go/config"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/database/model"
 )
 
@@ -21,24 +20,35 @@ var (
 	once     sync.Once
 )
 
-func Connect() *gorm.DB {
+// DatabaseConfig define la configuración necesaria para la conexión.
+type DatabaseConfig struct {
+	Host             string
+	User             string
+	Password         string
+	Name             string
+	Port             int
+	EnableMigrations bool
+	LogLevel         logger.LogLevel
+}
+
+// Connect inicializa y devuelve la conexión a la base de datos.
+func Connect(cfg DatabaseConfig) (*gorm.DB, error) {
+	var err error
+
 	once.Do(func() {
-		database, _ := config.GetConfig[config.DatabaseConfig]("Database")
+		// DSN
 		dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d",
-			database.Host,
-			database.User,
-			database.Password,
-			database.Name,
-			database.Port,
+			cfg.Host, cfg.User, cfg.Password, cfg.Name, cfg.Port,
 		)
 
-		newLogger := getLogger()
+		// Logger
+		newLogger := getLogger(cfg.LogLevel)
 
-		db, err := gorm.Open(postgres.New(
-			postgres.Config{
-				DSN:                  dsn,
-				PreferSimpleProtocol: true,
-			}), &gorm.Config{
+		// Conexión
+		instance, err = gorm.Open(postgres.New(postgres.Config{
+			DSN:                  dsn,
+			PreferSimpleProtocol: true,
+		}), &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
 				SingularTable: false,
 			},
@@ -46,49 +56,61 @@ func Connect() *gorm.DB {
 		})
 
 		if err != nil {
-			panic(fmt.Sprintf("failed to connect to the database: %v", err))
+			err = fmt.Errorf("failed to connect to the database: %w", err)
+			return
 		}
 
-		runMigrations(db)
+		// Ejecutar migraciones si está habilitado
+		if cfg.EnableMigrations {
+			if err = runMigrations(instance); err != nil {
+				return
+			}
+		}
 
-		instance = db
+		log.Println("Database connection initialized successfully.")
 	})
 
-	return instance
+	return instance, err
 }
 
-func runMigrations(db *gorm.DB) {
+// runMigrations ejecuta las migraciones de la base de datos.
+func runMigrations(db *gorm.DB) error {
 	err := db.AutoMigrate(&model.User{})
-
 	if err != nil {
-		panic(fmt.Sprintf("failed to migrate the database: %v", err))
+		return fmt.Errorf("failed to migrate the database: %w", err)
 	}
-
-	fmt.Println("Migrations done successfully.")
+	log.Println("Migrations executed successfully.")
+	return nil
 }
 
-func getLogger() logger.Interface {
-	newLogger := logger.New(
+// getLogger crea un logger de GORM.
+func getLogger(logLevel logger.LogLevel) logger.Interface {
+	return logger.New(
 		log.New(os.Stdout, "\r\n", log.LstdFlags),
 		logger.Config{
 			SlowThreshold: time.Second,
-			LogLevel:      logger.Info,
+			LogLevel:      logLevel,
 			Colorful:      true,
 		},
 	)
-
-	return newLogger
 }
 
+// CloseDB cierra la conexión a la base de datos.
 func CloseDB() {
-	sqlDB, err := instance.DB()
-	if err != nil {
-		log.Println("Error closing database connection:", err)
+	if instance == nil {
+		log.Println("No active database connection to close.")
 		return
 	}
 
-	err = sqlDB.Close()
+	sqlDB, err := instance.DB()
 	if err != nil {
+		log.Println("Error obtaining database connection:", err)
+		return
+	}
+
+	if err = sqlDB.Close(); err != nil {
 		log.Println("Error closing database connection:", err)
+	} else {
+		log.Println("Database connection closed successfully.")
 	}
 }

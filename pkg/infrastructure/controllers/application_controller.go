@@ -1,10 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
 )
 
@@ -28,10 +28,17 @@ func NewApplicationController(appName string) *ApplicationController {
 //	@Produce		json
 //	@Success		200	{object}	serializers.ApplicationSerializer
 //	@Security		bearerAuth
-//	@Router			/ [get]
-func (c *ApplicationController) ApplicationInformationHandler(context *gin.Context) {
+//	@Router			/application [get]
+func (c *ApplicationController) ApplicationInformationHandler(w http.ResponseWriter, r *http.Request) {
 	message := fmt.Sprintf("Welcome to %s", c.appName)
 	payload := serializers.NewApplicationSerializer(message)
 
-	context.JSON(http.StatusOK, payload)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+
+	err := json.NewEncoder(w).Encode(payload)
+	if err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
 }

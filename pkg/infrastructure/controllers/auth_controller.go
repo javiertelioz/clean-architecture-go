@@ -1,9 +1,9 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/auth"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
@@ -45,27 +45,29 @@ func NewAuthController(
 //	@Failure		401				{object}	response.Response			"desc"
 //	@Failure		500				{object}	response.Response			"desc"
 //	@Router			/api/v1/auth/login [post]
-func (c *AuthController) GetAccessTokenHandler(context *gin.Context) {
+func (c *AuthController) GetAccessTokenHandler(w http.ResponseWriter, r *http.Request) {
 	var loginDto dto.LoginDTO
 
-	if err := context.ShouldBindJSON(&loginDto); err != nil {
-		response.ErrorResponse(context, http.StatusBadRequest, err.Error())
+	// Decodificar el cuerpo de la solicitud
+	if err := json.NewDecoder(r.Body).Decode(&loginDto); err != nil {
+		response.ErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
+	// Obtener el token de acceso usando el caso de uso
 	token, err := auth.GetAccessTokenUserUseCase(
 		loginDto.Email,
 		loginDto.Password,
 		c.cryptoService,
 		c.jwtService,
 		c.userService,
-		c.loggerService)
+		c.loggerService,
+	)
 	if err != nil {
-		response.ErrorResponse(context, http.StatusBadRequest, err.Error())
+		response.ErrorResponse(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	payload := serializers.NewTokenSerializer(token)
-
-	response.SuccessResponse(context, http.StatusOK, payload)
+	response.SuccessResponse(w, http.StatusOK, payload)
 }

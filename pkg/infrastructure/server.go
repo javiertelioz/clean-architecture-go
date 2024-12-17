@@ -1,92 +1,69 @@
 package infrastructure
 
 import (
+	"context"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	"github.com/gin-gonic/gin"
+	"gorm.io/gorm/logger"
+
 	"github.com/javiertelioz/clean-architecture-go/config"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/middleware"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/routes"
+	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/database"
 )
 
-func Server() {
-	server := initServer()
+func RunApplication() {
+
+	dbConfig, _ := config.GetConfig[config.DatabaseConfig]("Database")
+	db, err := database.Connect(
+		database.DatabaseConfig{
+			Host:             dbConfig.Host,
+			User:             dbConfig.User,
+			Password:         dbConfig.Password,
+			Name:             dbConfig.Name,
+			Port:             dbConfig.Port,
+			EnableMigrations: true,
+			LogLevel:         logger.Info,
+		})
+
+	if err != nil {
+		log.Fatalf("Error initializing database: %v", err)
+	}
+	defer database.CloseDB()
+
+	dependencies := Bootstrap(db)
 
 	serverConfig, _ := config.GetConfig[config.ServerConfig]("Server")
 	addr := fmt.Sprintf("%s:%s", serverConfig.Host, serverConfig.Port)
 
-	fmt.Printf("🚀 Starting application on: http://%s/\n", addr)
-
-	err := server.Run(addr)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func initServer() *gin.Engine {
-	setGinMode()
-	router := gin.Default()
-
-	initMiddleware(router)
-
-	router.ForwardedByClientIP = true
-	err := router.SetTrustedProxies([]string{"127.0.0.1"})
-	if err != nil {
-		return nil
+	server := &http.Server{
+		Addr:    addr,
+		Handler: dependencies.Router,
 	}
 
-	initRouters(router)
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	return router
-}
+	go func() {
+		log.Printf("🚀 Starting application on: http://%s/\n", addr)
+		if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("Could not listen on %s: %v\n", addr, err)
+		}
+	}()
 
-func setGinMode() {
-	mode, _ := config.GetConfig[string]("GinMode")
-	gin.SetMode(mode)
-}
+	<-quit
+	log.Println("Shutting down server...")
 
-func initMiddleware(router *gin.Engine) gin.IRoutes {
-	return router.Use(
-		middleware.TranslationMiddleware(),
-		middleware.CORSMiddleware(),
-	)
-}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-//	@title						Swagger Clean Architecture Go
-//	@version					1.0
-//	@description				This is a sample. You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/)
-//	@termsOfService				http://swagger.io/terms/
-//	@contact.name				API Support
-//	@contact.url				http://www.swagger.io/support
-//	@contact.email				support@docs.io
-//
-//	@license.name				Apache 2.0
-//	@license.url				http://www.apache.org/licenses/LICENSE-2.0.html
-//
-//	@host						localhost:8080
-//	@BasePath					/
-//	@Schemes					http https
-//
-//	@securityDefinitions.apikey	bearerAuth
-//	@in							header
-//	@name						Authorization
-//	@description				Type "Bearer" followed by a space and the access token.
-//
-//	@accept						json
-//	@produce					json
-//
-//	@externalDocs.description	OpenAPI
-//	@externalDocs.url			https://swagger.io/resources/open-api/
-func initRouters(router *gin.Engine) {
-	routes.SetupApplicationRoutes(router)
-
-	routes.SetupGraphQLRoutes(router)
-	routes.SetupSwaggerRoutes(router)
-
-	v1 := router.Group("/api/v1")
-	{
-		routes.SetupHelloRoutes(v1)
-		routes.SetupUserController(v1)
-		routes.SetupAuthRoutes(v1)
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server forced to shutdown: %v", err)
 	}
+
+	log.Println("Server exited properly")
 }

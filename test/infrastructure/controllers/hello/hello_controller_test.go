@@ -3,23 +3,28 @@ package hello
 import (
 	"bytes"
 	"fmt"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/hello"
+	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
+	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
 )
 
 type HelloControllerTestSuite struct {
 	suite.Suite
-	route      *gin.Engine
-	request    *http.Request
-	response   *httptest.ResponseRecorder
-	controller *controllers.HelloController
-	name       string
-	error      error
+	route         *chi.Mux
+	useCase       *hello.SayHelloUseCase
+	loggerService *service.MockLoggerService
+	request       *http.Request
+	response      *httptest.ResponseRecorder
+	controller    *controllers.HelloController
+	name          string
+	error         error
 }
 
 func TestHelloControllerTestSuite(t *testing.T) {
@@ -27,10 +32,10 @@ func TestHelloControllerTestSuite(t *testing.T) {
 }
 
 func (suite *HelloControllerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
-
-	suite.route = gin.Default()
-	suite.controller = controllers.NewHelloController()
+	suite.route = chi.NewRouter()
+	suite.useCase = hello.NewSayHelloUseCase()
+	suite.loggerService = new(service.MockLoggerService)
+	suite.controller = controllers.NewHelloController(*suite.useCase, suite.loggerService)
 }
 
 func (suite *HelloControllerTestSuite) givenName(name string) {
@@ -38,7 +43,7 @@ func (suite *HelloControllerTestSuite) givenName(name string) {
 }
 
 func (suite *HelloControllerTestSuite) whenHelloHandlerIsCalled() {
-	suite.route.GET("/api/v1/hello/:name", suite.controller.HelloHandler)
+	suite.route.Get("/api/v1/hello/{name}", suite.controller.HelloHandler)
 	suite.request, suite.error = http.NewRequest(
 		http.MethodGet,
 		fmt.Sprintf("/api/v1/hello/%s", suite.name),

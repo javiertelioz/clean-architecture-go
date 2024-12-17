@@ -10,8 +10,9 @@ import (
 
 type SayHelloUseCaseTestSuite struct {
 	suite.Suite
-	name   string
-	result string
+	useCase *hello.SayHelloUseCase
+	name    string
+	result  string
 }
 
 func TestSayHelloUseCaseTestSuite(t *testing.T) {
@@ -19,15 +20,15 @@ func TestSayHelloUseCaseTestSuite(t *testing.T) {
 }
 
 func (suite *SayHelloUseCaseTestSuite) SetupTest() {
-	suite.result = "Hello Joe"
+	suite.useCase = hello.NewSayHelloUseCase()
 }
 
-func (suite *SayHelloUseCaseTestSuite) givenName(name string) {
+func (suite *SayHelloUseCaseTestSuite) givenAName(name string) {
 	suite.name = name
 }
 
 func (suite *SayHelloUseCaseTestSuite) whenSayHelloUseCaseIsCalled() {
-	suite.result = hello.SayHelloUseCase(suite.name)
+	suite.result = suite.useCase.Execute(suite.name)
 }
 
 func (suite *SayHelloUseCaseTestSuite) thenSayHello() {
@@ -36,7 +37,7 @@ func (suite *SayHelloUseCaseTestSuite) thenSayHello() {
 
 func (suite *SayHelloUseCaseTestSuite) TestSayHelloUseCase() {
 	// Given
-	suite.givenName("Joe")
+	suite.givenAName("Joe")
 
 	// When
 	suite.whenSayHelloUseCaseIsCalled()

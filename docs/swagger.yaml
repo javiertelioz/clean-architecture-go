@@ -1,5 +1,26 @@
-basePath: /
 definitions:
+  dto.CreateUserDTO:
+    properties:
+      email:
+        type: string
+      lastName:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      phone:
+        type: string
+      surname:
+        type: string
+    required:
+    - email
+    - lastName
+    - name
+    - password
+    - phone
+    type: object
   dto.LoginDTO:
     properties:
       email:
@@ -11,16 +32,19 @@ definitions:
     - email
     - password
     type: object
-  response.Error:
+  dto.UpdateUserDTO:
     properties:
-      details: {}
-      errorCode:
+      email:
         type: string
-      message:
+      lastName:
         type: string
-      request_id:
+      name:
         type: string
-      timestamp:
+      password:
+        type: string
+      phone:
+        type: string
+      surname:
         type: string
     type: object
   response.Response:
@@ -84,38 +108,9 @@ definitions:
         example: Jr
         type: string
     type: object
-host: localhost:8080
 info:
-  contact:
-    email: support@docs.io
-    name: API Support
-    url: http://www.swagger.io/support
-  description: 'This is a sample. You can find out more about Swagger at [http://swagger.io](http://swagger.io)
-    or on [irc.freenode.net, #swagger](http://swagger.io/irc/)'
-  license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://swagger.io/terms/
-  title: Swagger Clean Architecture Go
-  version: "1.0"
+  contact: {}
 paths:
-  /:
-    get:
-      consumes:
-      - application/json
-      description: Retrieve application information
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/serializers.ApplicationSerializer'
-      security:
-      - bearerAuth: []
-      summary: Retrieve application information
-      tags:
-      - Application
   /api/v1/auth/login:
     post:
       consumes:
@@ -182,60 +177,47 @@ paths:
     get:
       consumes:
       - application/json
-      description: Retrieves a list of all registered users
-      parameters:
-      - default: en-US
-        description: Language
-        in: header
-        name: Accept-Language
-        type: string
+      description: Retrieve a list of all registered users
       produces:
       - application/json
       responses:
         "200":
-          description: desc
+          description: List of Users
           schema:
             items:
               $ref: '#/definitions/serializers.UserSerializer'
             type: array
-        "401":
-          description: desc
+        "500":
+          description: Internal Server Error
           schema:
-            $ref: '#/definitions/response.Error'
-      security:
-      - bearerAuth: []
+            $ref: '#/definitions/response.Response'
       summary: List all users
       tags:
       - User
     post:
       consumes:
       - application/json
-      description: Register a new user based on provided data
+      description: Register a new user with provided information
       parameters:
-      - default: en-US
-        description: Language
-        in: header
-        name: Accept-Language
-        type: string
-      - description: User data to be created
+      - description: User Data
         in: body
-        name: User
+        name: request
         required: true
         schema:
-          $ref: '#/definitions/serializers.UserSerializer'
+          $ref: '#/definitions/dto.CreateUserDTO'
       produces:
       - application/json
       responses:
         "201":
-          description: desc
+          description: Created User
           schema:
             $ref: '#/definitions/serializers.UserSerializer'
         "400":
-          description: desc
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
-        "500":
-          description: desc
+        "409":
+          description: Conflict
           schema:
             $ref: '#/definitions/response.Response'
       summary: Create a new user
@@ -245,115 +227,100 @@ paths:
     delete:
       consumes:
       - application/json
-      description: Remove a user based on provided ID
+      description: Remove a user's information by ID
       parameters:
-      - default: 1
-        description: User ID
+      - description: User ID
         in: path
         name: id
         required: true
-        type: integer
-      - default: en-US
-        description: Language
-        in: header
-        name: Accept-Language
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: desc
+          description: Deleted Successfully
           schema:
             $ref: '#/definitions/response.Response'
         "500":
-          description: desc
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Delete a user
+      summary: Delete a user by ID
       tags:
       - User
     get:
       consumes:
       - application/json
-      description: get string by ID
+      description: Retrieve user information by ID
       parameters:
-      - default: 1
-        description: User ID
+      - description: User ID
         in: path
         name: id
         required: true
-        type: integer
-      - default: en-US
-        description: Language
-        in: header
-        name: Accept-Language
         type: string
       produces:
       - application/json
       responses:
         "200":
-          description: desc
+          description: User Data
           schema:
-            allOf:
-            - $ref: '#/definitions/response.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/serializers.UserSerializer'
-              type: object
+            $ref: '#/definitions/serializers.UserSerializer'
         "404":
-          description: desc
+          description: User Not Found
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Get user account by ID
+      summary: Get user by ID
       tags:
       - User
     put:
       consumes:
       - application/json
-      description: Modify an existing user based on provided data
+      description: Modify an existing user's information
       parameters:
-      - default: 1
-        description: User ID
+      - description: User ID
         in: path
         name: id
         required: true
-        type: integer
-      - description: User data to be updated
+        type: string
+      - description: User Data to Update
         in: body
-        name: User
+        name: request
         required: true
         schema:
-          $ref: '#/definitions/serializers.UserSerializer'
-      - default: en-US
-        description: Language
-        in: header
-        name: Accept-Language
-        type: string
+          $ref: '#/definitions/dto.UpdateUserDTO'
       produces:
       - application/json
       responses:
         "200":
-          description: desc
+          description: Updated User
           schema:
             $ref: '#/definitions/serializers.UserSerializer'
         "400":
-          description: desc
+          description: Bad Request
           schema:
             $ref: '#/definitions/response.Response'
         "500":
-          description: desc
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/response.Response'
-      summary: Update a user
+      summary: Update a user by ID
       tags:
       - User
-schemes:
-- http
-- https
-securityDefinitions:
-  bearerAuth:
-    description: Type "Bearer" followed by a space and the access token.
-    in: header
-    name: Authorization
-    type: apiKey
+  /application:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve application information
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/serializers.ApplicationSerializer'
+      security:
+      - bearerAuth: []
+      summary: Retrieve application information
+      tags:
+      - Application
 swagger: "2.0"
