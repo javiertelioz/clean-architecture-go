@@ -9,49 +9,12 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "http://swagger.io/terms/",
-        "contact": {
-            "name": "API Support",
-            "url": "http://www.swagger.io/support",
-            "email": "support@docs.io"
-        },
-        "license": {
-            "name": "Apache 2.0",
-            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-        },
+        "contact": {},
         "version": "{{.Version}}"
     },
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/": {
-            "get": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Retrieve application information",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "Application"
-                ],
-                "summary": "Retrieve application information",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/serializers.ApplicationSerializer"
-                        }
-                    }
-                }
-            }
-        },
         "/api/v1/auth/login": {
             "post": {
                 "description": "Get token",
@@ -147,12 +110,7 @@ const docTemplate = `{
         },
         "/api/v1/users": {
             "get": {
-                "security": [
-                    {
-                        "bearerAuth": []
-                    }
-                ],
-                "description": "Retrieves a list of all registered users",
+                "description": "Retrieve a list of all registered users",
                 "consumes": [
                     "application/json"
                 ],
@@ -163,18 +121,9 @@ const docTemplate = `{
                     "User"
                 ],
                 "summary": "List all users",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language",
-                        "name": "Accept-Language",
-                        "in": "header"
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "List of Users",
                         "schema": {
                             "type": "array",
                             "items": {
@@ -182,16 +131,16 @@ const docTemplate = `{
                             }
                         }
                     },
-                    "401": {
-                        "description": "desc",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/response.Error"
+                            "$ref": "#/definitions/response.Response"
                         }
                     }
                 }
             },
             "post": {
-                "description": "Register a new user based on provided data",
+                "description": "Register a new user with provided information",
                 "consumes": [
                     "application/json"
                 ],
@@ -204,37 +153,30 @@ const docTemplate = `{
                 "summary": "Create a new user",
                 "parameters": [
                     {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language",
-                        "name": "Accept-Language",
-                        "in": "header"
-                    },
-                    {
-                        "description": "User data to be created",
-                        "name": "User",
+                        "description": "User Data",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/serializers.UserSerializer"
+                            "$ref": "#/definitions/dto.CreateUserDTO"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "desc",
+                        "description": "Created User",
                         "schema": {
                             "$ref": "#/definitions/serializers.UserSerializer"
                         }
                     },
                     "400": {
-                        "description": "desc",
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
-                    "500": {
-                        "description": "desc",
+                    "409": {
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -244,7 +186,7 @@ const docTemplate = `{
         },
         "/api/v1/users/{id}": {
             "get": {
-                "description": "get string by ID",
+                "description": "Retrieve user information by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -254,45 +196,25 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Get user account by ID",
+                "summary": "Get user by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "default": 1,
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language",
-                        "name": "Accept-Language",
-                        "in": "header"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "User Data",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/response.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/serializers.UserSerializer"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/serializers.UserSerializer"
                         }
                     },
                     "404": {
-                        "description": "desc",
+                        "description": "User Not Found",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -300,7 +222,7 @@ const docTemplate = `{
                 }
             },
             "put": {
-                "description": "Modify an existing user based on provided data",
+                "description": "Modify an existing user's information",
                 "consumes": [
                     "application/json"
                 ],
@@ -310,48 +232,40 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Update a user",
+                "summary": "Update a user by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "default": 1,
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     },
                     {
-                        "description": "User data to be updated",
-                        "name": "User",
+                        "description": "User Data to Update",
+                        "name": "request",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/serializers.UserSerializer"
+                            "$ref": "#/definitions/dto.UpdateUserDTO"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language",
-                        "name": "Accept-Language",
-                        "in": "header"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "Updated User",
                         "schema": {
                             "$ref": "#/definitions/serializers.UserSerializer"
                         }
                     },
                     "400": {
-                        "description": "desc",
+                        "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
                     "500": {
-                        "description": "desc",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
@@ -359,7 +273,7 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Remove a user based on provided ID",
+                "description": "Remove a user's information by ID",
                 "consumes": [
                     "application/json"
                 ],
@@ -369,35 +283,55 @@ const docTemplate = `{
                 "tags": [
                     "User"
                 ],
-                "summary": "Delete a user",
+                "summary": "Delete a user by ID",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "default": 1,
+                        "type": "string",
                         "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "string",
-                        "default": "en-US",
-                        "description": "Language",
-                        "name": "Accept-Language",
-                        "in": "header"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "desc",
+                        "description": "Deleted Successfully",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
                         }
                     },
                     "500": {
-                        "description": "desc",
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/response.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/application": {
+            "get": {
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ],
+                "description": "Retrieve application information",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Application"
+                ],
+                "summary": "Retrieve application information",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/serializers.ApplicationSerializer"
                         }
                     }
                 }
@@ -405,6 +339,37 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "dto.CreateUserDTO": {
+            "type": "object",
+            "required": [
+                "email",
+                "lastName",
+                "name",
+                "password",
+                "phone"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "lastName": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "surname": {
+                    "type": "string"
+                }
+            }
+        },
         "dto.LoginDTO": {
             "type": "object",
             "required": [
@@ -421,20 +386,25 @@ const docTemplate = `{
                 }
             }
         },
-        "response.Error": {
+        "dto.UpdateUserDTO": {
             "type": "object",
             "properties": {
-                "details": {},
-                "errorCode": {
+                "email": {
                     "type": "string"
                 },
-                "message": {
+                "lastName": {
                     "type": "string"
                 },
-                "request_id": {
+                "name": {
                     "type": "string"
                 },
-                "timestamp": {
+                "password": {
+                    "type": "string"
+                },
+                "phone": {
+                    "type": "string"
+                },
+                "surname": {
                     "type": "string"
                 }
             }
@@ -524,25 +494,17 @@ const docTemplate = `{
                 }
             }
         }
-    },
-    "securityDefinitions": {
-        "bearerAuth": {
-            "description": "Type \"Bearer\" followed by a space and the access token.",
-            "type": "apiKey",
-            "name": "Authorization",
-            "in": "header"
-        }
     }
 }`
 
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
-	Version:          "1.0",
-	Host:             "localhost:8080",
-	BasePath:         "/",
-	Schemes:          []string{"http", "https"},
-	Title:            "Swagger Clean Architecture Go",
-	Description:      "This is a sample. You can find out more about Swagger at [http://swagger.io](http://swagger.io) or on [irc.freenode.net, #swagger](http://swagger.io/irc/)",
+	Version:          "",
+	Host:             "",
+	BasePath:         "",
+	Schemes:          []string{},
+	Title:            "",
+	Description:      "",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

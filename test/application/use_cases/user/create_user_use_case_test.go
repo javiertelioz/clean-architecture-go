@@ -81,7 +81,7 @@ func (suite *CreateUserUseCaseTestSuite) thenExpectError() {
 	//suite.mockCryptoService.AssertExpectations(suite.T())
 }
 
-func (suite *CreateUserUseCaseTestSuite) TestCreateUserUseCaseWithSuccessResult() {
+func (suite *CreateUserUseCaseTestSuite) TestUseCaseWithSuccessResult() {
 	// Given
 	suite.givenCryptoServiceReturnsSuccess()
 	suite.givenUserServiceByEmailReturnsError()

@@ -8,19 +8,20 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
-	"github.com/stretchr/testify/suite"
 )
 
 type GetAccessTokenHandlerTestSuite struct {
 	suite.Suite
-	route             *gin.Engine
+	route             *chi.Mux
 	controller        *controllers.AuthController
 	mockCryptoService *service.MockCryptoService
 	mockJwtService    *service.MockJwtService
@@ -37,9 +38,8 @@ func TestGetAccessTokenHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *GetAccessTokenHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
 
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 	suite.mockCryptoService = new(service.MockCryptoService)
 	suite.mockJwtService = new(service.MockJwtService)
 	suite.mockUserService = new(service.MockUserService)
@@ -82,7 +82,7 @@ func (suite *GetAccessTokenHandlerTestSuite) whenCallGetAccessTokenHandler() {
 	suite.request, _ = http.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewBuffer(data))
 	suite.response = httptest.NewRecorder()
 
-	suite.route.POST("/api/v1/auth/login", suite.controller.GetAccessTokenHandler)
+	suite.route.Post("/api/v1/auth/login", suite.controller.GetAccessTokenHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 
@@ -90,7 +90,7 @@ func (suite *GetAccessTokenHandlerTestSuite) whenCallGetAccessTokenHandlerWithIn
 	suite.request, _ = http.NewRequest(http.MethodPost, "/api/v1/auth/login", bytes.NewBufferString(invalidJSON))
 	suite.response = httptest.NewRecorder()
 
-	suite.route.POST("/api/v1/auth/login", suite.controller.GetAccessTokenHandler)
+	suite.route.Post("/api/v1/auth/login", suite.controller.GetAccessTokenHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 

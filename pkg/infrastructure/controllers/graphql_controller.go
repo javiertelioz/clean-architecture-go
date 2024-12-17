@@ -3,7 +3,6 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"github.com/graphql-go/graphql"
 	"github.com/graphql-go/handler"
 )
@@ -42,10 +41,15 @@ func NewGraphQLController(schema graphql.Schema) *GraphQLController {
 	}
 }
 
-func (c *GraphQLController) SandboxHandler(ctx *gin.Context) {
-	ctx.Data(http.StatusOK, "text/html; charset=utf-8", sandboxHTML)
+func (c *GraphQLController) SandboxHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(http.StatusOK)
+	_, err := w.Write(sandboxHTML)
+	if err != nil {
+		http.Error(w, "Failed to render sandbox HTML", http.StatusInternalServerError)
+	}
 }
 
-func (c *GraphQLController) GraphQLHandler(ctx *gin.Context) {
-	c.handler.ServeHTTP(ctx.Writer, ctx.Request)
+func (c *GraphQLController) GraphQLHandler(w http.ResponseWriter, r *http.Request) {
+	c.handler.ServeHTTP(w, r)
 }

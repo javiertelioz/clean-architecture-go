@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/graphql-go/graphql"
-	"github.com/javiertelioz/clean-architecture-go/config"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
 )
 
@@ -12,9 +11,8 @@ type ApplicationResolver struct {
 	appName string
 }
 
-func NewApplicationResolver() *ApplicationResolver {
-	appName, _ := config.GetConfig[string]("AppName")
-
+// NewApplicationResolver godoc
+func NewApplicationResolver(appName string) *ApplicationResolver {
 	return &ApplicationResolver{
 		appName: appName,
 	}

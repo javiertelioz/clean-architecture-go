@@ -5,16 +5,10 @@ import (
 	"strconv"
 
 	"github.com/graphql-go/graphql"
-	"github.com/javiertelioz/clean-architecture-go/config"
 	userUseCases "github.com/javiertelioz/clean-architecture-go/pkg/application/use_cases/user"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/contracts/services"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
-	domainServices "github.com/javiertelioz/clean-architecture-go/pkg/domain/services"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/database"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/logger"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/repository"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	infrastructureServices "github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/services"
 )
 
 type UserResolver struct {
@@ -23,18 +17,14 @@ type UserResolver struct {
 	loggerService services.LoggerService
 }
 
-func NewUserResolver() *UserResolver {
-	db := database.Connect()
-	salt, _ := config.GetConfig[int]("Crypto.salt")
-
-	loggerService := logger.NewLogger()
-	userRepository := repository.NewUserRepository(db)
-	cryptoService := infrastructureServices.NewBcryptService(salt)
-	userService := domainServices.NewUserService(userRepository, loggerService)
-
+func NewUserResolver(
+	cryptoService services.CryptoService,
+	userService services.UserService,
+	loggerService services.LoggerService,
+) *UserResolver {
 	return &UserResolver{
-		userService:   userService,
 		cryptoService: cryptoService,
+		userService:   userService,
 		loggerService: loggerService,
 	}
 }

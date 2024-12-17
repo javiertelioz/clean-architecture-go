@@ -1,19 +1,20 @@
 package controllers
 
 import (
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
 	"github.com/graphql-go/graphql"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 )
 
 type SandboxHandlerTestSuite struct {
 	suite.Suite
-	route      *gin.Engine
+	route      *chi.Mux
 	controller *controllers.GraphQLController
 	request    *http.Request
 	response   *httptest.ResponseRecorder
@@ -25,8 +26,7 @@ func TestSandboxHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *SandboxHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 
 	suite.mockSchema = graphql.Schema{}
 	suite.controller = controllers.NewGraphQLController(suite.mockSchema)
@@ -36,7 +36,7 @@ func (suite *SandboxHandlerTestSuite) whenCallSandboxHandler() {
 	suite.request, _ = http.NewRequest(http.MethodGet, "/sandbox", nil)
 	suite.response = httptest.NewRecorder()
 
-	suite.route.GET("/sandbox", suite.controller.SandboxHandler)
+	suite.route.Get("/sandbox", suite.controller.SandboxHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 

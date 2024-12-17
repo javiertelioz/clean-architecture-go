@@ -8,19 +8,20 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/dto"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
-	"github.com/stretchr/testify/suite"
 )
 
 type CreateUserHandlerTestSuite struct {
 	suite.Suite
-	route             *gin.Engine
+	route             *chi.Mux
 	controller        *controllers.UserController
 	mockUserService   *service.MockUserService
 	mockLoggerService *service.MockLoggerService
@@ -36,9 +37,8 @@ func TestCreateUserHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *CreateUserHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
 
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 	suite.mockUserService = new(service.MockUserService)
 	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.mockCryptoService = new(service.MockCryptoService)
@@ -90,7 +90,7 @@ func (suite *CreateUserHandlerTestSuite) whenCallCreateUserHandler() {
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
-	suite.route.POST("/api/v1/users", suite.controller.CreateUserHandler)
+	suite.route.Post("/api/v1/users", suite.controller.CreateUserHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 
@@ -116,10 +116,6 @@ func (suite *CreateUserHandlerTestSuite) thenReturnErrorResponse() {
 	suite.NoError(err)
 	suite.Equal(http.StatusConflict, suite.response.Code)
 	suite.Equal("USER_PASSWORD_WRONG", responseBody.Message)
-
-	//suite.mockUserService.AssertExpectations(suite.T())
-
-	//suite.mockCryptoService.AssertExpectations(suite.T())
 }
 
 func (suite *CreateUserHandlerTestSuite) TestCreateUserHandlerSuccess() {
