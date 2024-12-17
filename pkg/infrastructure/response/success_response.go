@@ -1,12 +1,21 @@
 package response
 
-import "github.com/gin-gonic/gin"
+import (
+	"encoding/json"
+	"net/http"
+)
 
-func SuccessResponse(c *gin.Context, status int, payload interface{}) {
+func SuccessResponse(w http.ResponseWriter, status int, payload interface{}) {
 	res := Response{
 		Data:    payload,
 		Message: "Operation was successful",
 	}
 
-	c.JSON(status, res)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(status)
+
+	err := json.NewEncoder(w).Encode(res)
+	if err != nil {
+		http.Error(w, "Failed to encode success response", http.StatusInternalServerError)
+	}
 }

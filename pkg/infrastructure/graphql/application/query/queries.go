@@ -6,12 +6,10 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/graphql/application/types"
 )
 
-func GetApplicationQuery() *graphql.Field {
-	applicationResolver := resolve.NewApplicationResolver()
-
+func GetApplicationInformationQuery(appResolver *resolve.ApplicationResolver) *graphql.Field {
 	return &graphql.Field{
 		Type:        types.ApplicationType,
 		Description: "Get application information",
-		Resolve:     applicationResolver.GetApplicationInformationResolve,
+		Resolve:     appResolver.GetApplicationInformationResolve,
 	}
 }

@@ -1,23 +1,21 @@
 package middleware
 
 import (
+	"net/http"
 	"time"
 
-	"github.com/gin-contrib/cors"
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/cors"
 	"github.com/javiertelioz/clean-architecture-go/config"
 )
 
-func CORSMiddleware() gin.HandlerFunc {
+func CORSMiddleware() func(next http.Handler) http.Handler {
 	corsConfig, _ := config.GetConfig[config.CorsConfig]("Cors")
-	c := cors.Config{
-		AllowOrigins:     corsConfig.AllowedOrigins, // []string{"https://foo.com"},
-		AllowMethods:     corsConfig.AllowMethods,
-		AllowHeaders:     corsConfig.AllowHeaders,
-		ExposeHeaders:    corsConfig.ExposeHeaders,
+	return cors.Handler(cors.Options{
+		AllowedOrigins:   corsConfig.AllowedOrigins, // []string{"https://foo.com"}
+		AllowedMethods:   corsConfig.AllowMethods,   // []string{"GET", "POST", "PUT", "DELETE"}
+		AllowedHeaders:   corsConfig.AllowHeaders,   // []string{"Content-Type", "Authorization"}
+		ExposedHeaders:   corsConfig.ExposeHeaders,  // []string{"X-Total-Count"}
 		AllowCredentials: corsConfig.AllowCredentials,
-		MaxAge:           time.Duration(corsConfig.MaxAge) * time.Hour,
-	}
-
-	return cors.New(c)
+		MaxAge:           int((time.Duration(corsConfig.MaxAge) * time.Hour).Seconds()), // En segundos
+	})
 }

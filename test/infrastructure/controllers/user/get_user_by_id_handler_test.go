@@ -6,19 +6,20 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/suite"
 
-	"github.com/gin-gonic/gin"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/entity"
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
-	"github.com/stretchr/testify/suite"
 )
 
 type GetUserByIdHandlerTestSuite struct {
 	suite.Suite
-	route             *gin.Engine
+	route             *chi.Mux
 	controller        *controllers.UserController
 	mockUserService   *service.MockUserService
 	mockLoggerService *service.MockLoggerService
@@ -34,9 +35,7 @@ func TestGetUserByIdHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *GetUserByIdHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
-
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 	suite.mockUserService = new(service.MockUserService)
 	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.mockCryptoService = new(service.MockCryptoService)
@@ -74,7 +73,7 @@ func (suite *GetUserByIdHandlerTestSuite) whenCallGetUserByIdHandler() {
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
-	suite.route.GET("/api/v1/user/:id", suite.controller.GetUserByIdHandler)
+	suite.route.Get("/api/v1/user/{id}", suite.controller.GetUserByIdHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 

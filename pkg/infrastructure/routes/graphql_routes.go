@@ -1,16 +1,29 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/graphql"
 )
 
-func SetupGraphQLRoutes(route *gin.Engine) {
-	schema := graphql.NewSchema()
-	controller := controllers.NewGraphQLController(schema)
+type GraphQLRoutes struct {
+	router     chi.Router
+	controller *controllers.GraphQLController
+}
 
-	route.GET("/sandbox", controller.SandboxHandler)
-	route.GET("/graphql", controller.GraphQLHandler)
-	route.POST("/graphql", controller.GraphQLHandler)
+func NewGraphQLRoutes(controller *controllers.GraphQLController) *GraphQLRoutes {
+	router := chi.NewRouter()
+	return &GraphQLRoutes{
+		router:     router,
+		controller: controller,
+	}
+}
+
+func (g *GraphQLRoutes) Mount() http.Handler {
+	g.router.Get("/sandbox", g.controller.SandboxHandler)
+	g.router.Get("/", g.controller.GraphQLHandler)
+	g.router.Post("/", g.controller.GraphQLHandler)
+
+	return g.router
 }

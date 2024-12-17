@@ -6,9 +6,7 @@ import (
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/graphql/user/types"
 )
 
-func CreateUserMutation() *graphql.Field {
-	userResolve := resolve.NewUserResolver()
-
+func CreateUserMutation(userResolver *resolve.UserResolver) *graphql.Field {
 	return &graphql.Field{
 		Name:        "CreateUser",
 		Type:        types.UserType,
@@ -18,13 +16,11 @@ func CreateUserMutation() *graphql.Field {
 				Type: graphql.NewNonNull(types.CreateUserType),
 			},
 		},
-		Resolve: userResolve.CreateUser,
+		Resolve: userResolver.CreateUser,
 	}
 }
 
-func UpdateUserMutation() *graphql.Field {
-	userResolve := resolve.NewUserResolver()
-
+func UpdateUserMutation(userResolver *resolve.UserResolver) *graphql.Field {
 	return &graphql.Field{
 		Name:        "UpdateUser",
 		Type:        types.UserType,
@@ -37,13 +33,11 @@ func UpdateUserMutation() *graphql.Field {
 				Type: graphql.NewNonNull(types.UpdateUserType),
 			},
 		},
-		Resolve: userResolve.UpdateUser,
+		Resolve: userResolver.UpdateUser,
 	}
 }
 
-func DeleteUserMutation() *graphql.Field {
-	userResolve := resolve.NewUserResolver()
-
+func DeleteUserMutation(userResolver *resolve.UserResolver) *graphql.Field {
 	return &graphql.Field{
 		Name:        "DeleteUser",
 		Type:        types.DeleteUserType,
@@ -53,6 +47,6 @@ func DeleteUserMutation() *graphql.Field {
 				Type: graphql.NewNonNull(graphql.String),
 			},
 		},
-		Resolve: userResolve.DeleteUserById,
+		Resolve: userResolver.DeleteUserById,
 	}
 }

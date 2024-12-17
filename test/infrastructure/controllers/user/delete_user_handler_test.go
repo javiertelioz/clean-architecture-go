@@ -7,17 +7,18 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/domain/exceptions"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/response"
 	"github.com/javiertelioz/clean-architecture-go/test/mocks/service"
-	"github.com/stretchr/testify/suite"
 )
 
 type DeleteUserHandlerTestSuite struct {
 	suite.Suite
-	route             *gin.Engine
+	route             *chi.Mux
 	controller        *controllers.UserController
 	mockUserService   *service.MockUserService
 	mockLoggerService *service.MockLoggerService
@@ -32,9 +33,7 @@ func TestDeleteUserHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *DeleteUserHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
-
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 	suite.mockUserService = new(service.MockUserService)
 	suite.mockLoggerService = new(service.MockLoggerService)
 	suite.mockCryptoService = new(service.MockCryptoService)
@@ -66,7 +65,7 @@ func (suite *DeleteUserHandlerTestSuite) whenCallDeleteUserHandler() {
 	suite.request.Header.Set("Accept-Language", "es-MX")
 	suite.response = httptest.NewRecorder()
 
-	suite.route.DELETE("/api/v1/users/:id", suite.controller.DeleteUserHandler)
+	suite.route.Delete("/api/v1/users/{id}", suite.controller.DeleteUserHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 

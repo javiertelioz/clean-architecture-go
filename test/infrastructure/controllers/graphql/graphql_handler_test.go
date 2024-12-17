@@ -2,15 +2,16 @@ package controllers
 
 import (
 	"bytes"
-	"github.com/graphql-go/graphql"
-	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/graphql-go/graphql"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
+
+	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 )
 
 type MockGraphQLHandler struct {
@@ -23,7 +24,7 @@ func (m *MockGraphQLHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 type GraphQLHandlerTestSuite struct {
 	suite.Suite
-	route              *gin.Engine
+	route              *chi.Mux
 	controller         *controllers.GraphQLController
 	request            *http.Request
 	response           *httptest.ResponseRecorder
@@ -36,9 +37,7 @@ func TestGraphQLHandlerTestSuite(t *testing.T) {
 }
 
 func (suite *GraphQLHandlerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
-	suite.route = gin.Default()
-
+	suite.route = chi.NewRouter()
 	suite.mockGraphQLHandler = new(MockGraphQLHandler)
 	suite.mockSchema = graphql.Schema{}
 	suite.controller = controllers.NewGraphQLController(suite.mockSchema)
@@ -48,7 +47,7 @@ func (suite *GraphQLHandlerTestSuite) whenCallGraphQLHandler() {
 	suite.request, _ = http.NewRequest(http.MethodPost, "/graphql", bytes.NewBufferString(""))
 	suite.response = httptest.NewRecorder()
 
-	suite.route.POST("/graphql", suite.controller.GraphQLHandler)
+	suite.route.Post("/graphql", suite.controller.GraphQLHandler)
 	suite.route.ServeHTTP(suite.response, suite.request)
 }
 

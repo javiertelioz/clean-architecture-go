@@ -7,15 +7,16 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/gin-gonic/gin"
+	"github.com/go-chi/chi/v5"
+	"github.com/stretchr/testify/suite"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/serializers"
-	"github.com/stretchr/testify/suite"
 )
 
 type ApplicationControllerTestSuite struct {
 	suite.Suite
-	route      *gin.Engine
+	route      *chi.Mux
 	request    *http.Request
 	response   *httptest.ResponseRecorder
 	controller *controllers.ApplicationController
@@ -29,23 +30,25 @@ func TestApplicationControllerTestSuite(t *testing.T) {
 }
 
 func (suite *ApplicationControllerTestSuite) SetupTest() {
-	gin.SetMode(gin.TestMode)
 	suite.appName = "TestApp"
-	suite.route = gin.Default()
+	suite.route = chi.NewRouter()
 	suite.controller = controllers.NewApplicationController(suite.appName)
 	suite.body = &serializers.ApplicationSerializer{}
 }
 
 func (suite *ApplicationControllerTestSuite) whenCallApplicationHandler() {
-	suite.route.GET("/", suite.controller.ApplicationInformationHandler)
+	suite.route.Get("/", suite.controller.ApplicationInformationHandler)
+
 	suite.request, suite.error = http.NewRequest(
 		http.MethodGet,
 		"/",
-		bytes.NewBuffer(nil))
+		bytes.NewBuffer(nil),
+	)
 	suite.response = httptest.NewRecorder()
+
 	suite.route.ServeHTTP(suite.response, suite.request)
 
-	suite.error = json.Unmarshal(suite.response.Body.Bytes(), &suite.body)
+	suite.error = json.Unmarshal(suite.response.Body.Bytes(), suite.body)
 }
 
 func (suite *ApplicationControllerTestSuite) thenReturnSuccessResponse() {

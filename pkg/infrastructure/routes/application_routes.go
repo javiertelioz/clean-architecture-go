@@ -1,15 +1,28 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/javiertelioz/clean-architecture-go/config"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
+
 	"github.com/javiertelioz/clean-architecture-go/pkg/infrastructure/controllers"
 )
 
-func SetupApplicationRoutes(route *gin.Engine) {
-	appConfig, _ := config.GetConfig[string]("AppName")
+type ApplicationRoutes struct {
+	router     chi.Router
+	controller *controllers.ApplicationController
+}
 
-	controller := controllers.NewApplicationController(appConfig)
+func NewApplicationRoutes(controller *controllers.ApplicationController) *ApplicationRoutes {
+	router := chi.NewRouter()
+	return &ApplicationRoutes{
+		router:     router,
+		controller: controller,
+	}
+}
 
-	route.GET("/", controller.ApplicationInformationHandler)
+func (a *ApplicationRoutes) Mount() http.Handler {
+	a.router.Get("/", a.controller.ApplicationInformationHandler)
+
+	return a.router
 }
